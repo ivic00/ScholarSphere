@@ -19,5 +19,14 @@ namespace api.Models
         public byte[] PdfData { get; set; }
         public List<Review> Reviews { get; set; }
 
+        public Paper(int id, string Title, string Abstract, string Keywords, User Author)
+        {
+            this.Id = id;
+            this.Title = Title;
+            this.Abstract = Abstract;
+            this.Keywords = Keywords;
+            this.Author = Author;
+        }
+
     }
 }
