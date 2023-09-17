@@ -15,5 +15,6 @@ namespace api.Data
         }
 
         public DbSet<Paper> Papers => Set<Paper>();
+        public DbSet<User> Users => Set<User>();
     }
 }

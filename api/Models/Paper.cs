@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,22 +12,27 @@ namespace api.Models
         public string Title { get; set; }
         public string Abstract { get; set; }
         public string Keywords { get; set; }
-        public User Author { get; set; }
+        public string FullText { get; set; }
+        //public User Author { get; set; }
         public DateTime PublicationDate { get; set; }
-        /// <summary>
-        /// PDF file of the Paper
-        /// </summary>
-        public byte[] PdfData { get; set; }
-        public List<Review> Reviews { get; set; }
+        public DateTime? LastEditDateTime { get; set; }
+        public string PdfURL { get; set; }
 
-        public Paper(int id, string Title, string Abstract, string Keywords, User Author)
+        public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string FullText)
         {
-            this.Id = id;
+            Id = id;
             this.Title = Title;
             this.Abstract = Abstract;
+            //this.Author = Author;
+            this.PublicationDate = PublicationDate;
+            this.PdfURL = PdfURL;
             this.Keywords = Keywords;
-            this.Author = Author;
+            this.FullText = FullText;
         }
 
+        public Paper()
+        {
+
+        }
     }
 }

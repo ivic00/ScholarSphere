@@ -6,14 +6,13 @@ using api.Models;
 
 namespace api.DTOs.Paper
 {
-    public class GetPaperDTO
+    public class UpdatePaperDTO
     {
-        public int Id { get; set; }
+         public int Id { get; set; }
         public string Title { get; set; }
         public string Abstract { get; set; }
         public string Keywords { get; set; }
         public string FullText { get; set; }
-        public DateTime PublicationDate { get; set; }
         public string PdfURL { get; set; }
     }
 }

@@ -13,16 +13,18 @@ namespace api.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }    
         public UserRole Role { get; set; }
-        /*public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }*/
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
 
-        public User(int Id, string UserName, string FirstName, string LastName, UserRole Role)
+        public User(int Id, string UserName, string FirstName, string LastName, UserRole Role, byte[] PasswordHash, byte[] PasswordSalt)
         {
             this.Id = Id;
             this.UserName = UserName;
             this.FirstName = FirstName;
             this.LastName = LastName;
             this.Role = Role;
+            this.PasswordHash = PasswordHash;
+            this.PasswordSalt = PasswordSalt;
         }
     }
 }
