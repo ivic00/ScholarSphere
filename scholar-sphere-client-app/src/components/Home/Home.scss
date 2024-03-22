@@ -1,0 +1,49 @@
+$text-animation-duration: 1s;
+$text-animation-delay: 0.3s;
+@keyframes slideIn {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.text1,
+.text2,
+.text3 {
+  opacity: 0%;
+  display: inline-block;
+  animation: slideIn 1s ease forwards;
+}
+.text2 {
+  animation-delay: $text-animation-delay;
+}
+.text1 {
+  animation-delay: 0s;
+}
+.text3 {
+  animation-delay: $text-animation-delay * 2;
+}
+.buttons-div {
+  opacity: 0;
+  display: inline-block;
+  animation: fadeIn 1s ease forwards;
+  animation-delay: $text-animation-delay + 1;
+}
+
+.home-page-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80vh;
+}

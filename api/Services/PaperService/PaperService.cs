@@ -35,11 +35,23 @@ namespace api.Services.PaperService
             _context = context;
             _mapper = mapper;
         }
-        public async Task<ServiceResponse<List<GetPaperDTO>>> GetAllPapers()
+        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize)
         {
-            var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
-            var DbPapers = await _context.Papers.ToListAsync();
-            serviceResponse.Data = DbPapers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToList();
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
+            var query = _context.Papers.AsQueryable();
+            var totalCount = await query.CountAsync();
+
+            var papers = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => _mapper.Map<GetPaperDTO>(x))
+            .ToListAsync();
+
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var result = Tuple.Create(papers, totalPages);
+
+            serviceResponse.Data = result;
 
             return serviceResponse;
         }
@@ -77,15 +89,16 @@ namespace api.Services.PaperService
         public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper)
         {
             var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
-            
+
             var paper = _mapper.Map<Paper>(newPaper);
             paper.PublicationDate = DateTime.Now;
+            paper.Author = await _context.Users.FirstOrDefaultAsync(x => x.Id == newPaper.AuthorId);
 
             _context.Papers.Add(paper);
             await _context.SaveChangesAsync();
 
+            serviceResponse.Message = "Paper uploaded successfully";
             serviceResponse.Data = await _context.Papers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
-
             return serviceResponse;
         }
 
@@ -124,11 +137,11 @@ namespace api.Services.PaperService
             ServiceResponse<List<GetPaperDTO>> serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
             try
             {
-                
+
                 var paper = await _context.Papers.FirstOrDefaultAsync(x => x.Id == id);
                 if (paper is null)
                     throw new Exception($"Paper with Id: '{id}' does not exist");
-                
+
                 _context.Papers.Remove(paper);
                 await _context.SaveChangesAsync();
 

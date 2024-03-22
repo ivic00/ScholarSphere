@@ -17,9 +17,8 @@ import {
 import "../ScientificPaper/ScientificPaper.scss";
 import { backendLink } from "../../config";
 
-const ScientificPaper = (props: {paper:IPaper}) => {
+const ScientificPaper = (props: { paper: IPaper }) => {
   const [paper, setPaper] = useState<IPaper>();
-
 
   useEffect(() => {
     setPaper(props.paper);
@@ -27,9 +26,9 @@ const ScientificPaper = (props: {paper:IPaper}) => {
 
   return (
     <div id="paperDiv">
-      <Card>
+      <Card variant="elevation" elevation={3}>
         <CardContent>
-          <Typography variant="h5" color="initial">
+          <Typography variant="h5" color="textPrimary">
             {paper?.title}
           </Typography>
           <Typography variant="subtitle1" color="Highlight">
@@ -44,7 +43,14 @@ const ScientificPaper = (props: {paper:IPaper}) => {
             Keywords:{" "}
           </Typography>
           {paper?.keywords.split(", ").map((keyword, index) => (
-            <Chip key={index} className="keywordChip" label={keyword} variant="filled" color="warning" size="small" />
+            <Chip
+              key={index}
+              className="keywordChip"
+              label={keyword}
+              variant="filled"
+              color="secondary"
+              size="small"
+            />
           ))}
           <br />
           <br />
@@ -66,6 +72,6 @@ const ScientificPaper = (props: {paper:IPaper}) => {
       </Card>
     </div>
   );
-}
+};
 
 export default ScientificPaper;

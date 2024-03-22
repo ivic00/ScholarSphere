@@ -3,7 +3,10 @@
   align-items: center;
   justify-content: center;
 }
-
 .centered-content {
   margin-top: 70px;
+}
+.container {
+  margin-top: 10px;
+  width: 80vw;
 }

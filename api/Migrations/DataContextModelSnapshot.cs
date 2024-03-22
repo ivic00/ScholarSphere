@@ -34,6 +34,9 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("AuthorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FullText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -57,6 +60,8 @@ namespace api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Papers");
                 });
@@ -95,6 +100,20 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("api.Models.Paper", b =>
+                {
+                    b.HasOne("api.Models.User", "Author")
+                        .WithMany("Papers")
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("api.Models.User", b =>
+                {
+                    b.Navigation("Papers");
                 });
 #pragma warning restore 612, 618
         }

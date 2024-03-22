@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.DTOs.Paper;
+using api.DTOs.UserDTO;
 using api.Models;
 
 namespace api
@@ -13,6 +14,8 @@ namespace api
         {
             CreateMap<Paper, GetPaperDTO>();
             CreateMap<AddPaperDTO, Paper>();
+
+            CreateMap<User, GetUserDTO>();
         }
     }
 }

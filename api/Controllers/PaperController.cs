@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using api.DTOs.Paper;
 using api.Models;
 using api.Services.PaperService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PaperController : ControllerBase
@@ -30,10 +32,18 @@ namespace api.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllPapers")]
-        public async Task<ActionResult<ServiceResponse<List<Paper>>>> GetAllPapers()
+        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            return Ok(await _paperService.GetAllPapers());
+            var tuple = await _paperService.GetAllPapers(pageNumber, pageSize);
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>()
+            {
+                Data = tuple.Data,
+                Success = tuple.Success,
+                Message = tuple.Message
+            };
+            return Ok(serviceResponse);
         }
 
         /*[HttpGet("GetAllFromAuthor")]

@@ -1,0 +1,30 @@
+.sign-in-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.input-div {
+  width: 40vw;
+  .person-icon {
+    width: 10vh;
+    height: 10vh;
+    margin-left: 46%;
+    .person-icon-icon {
+      width: 6vh;
+      height: 6vh;
+    }
+    animation: rotateCounterClockwise 2s linear infinite;
+  }
+
+}
+
+@keyframes rotateCounterClockwise {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(-360deg);
+    }
+  }

@@ -12,7 +12,7 @@ namespace api.DTOs.Paper
         public string Abstract { get; set; }
         public string Keywords { get; set; }
         public string FullText { get; set; }
-        //public User Author { get; set; }
+        public int AuthorId { get; set; }
         //public DateTime PublicationDate { get; set; }
         public string PdfURL { get; set; }
     }

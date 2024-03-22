@@ -9,7 +9,7 @@ namespace api.Services.PaperService
 {
     public interface IPaperService
     {
-        Task<ServiceResponse<List<GetPaperDTO>>> GetAllPapers();
+        Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize);
         //Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int Id);
         Task<ServiceResponse<GetPaperDTO>> GetPaper(int Id);
         Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper);
