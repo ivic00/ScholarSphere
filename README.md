@@ -23,7 +23,3 @@ Connect with fellow scholars, researchers, and thought leaders from around the g
 
 Join us on ScholarSphere and embark on an odyssey of intellectual exploration, guided by the synergy of technology and scholarship. The pursuit of knowledge knows no boundaries, and here, the scholarly spirit thrives.
 
-🌐 Connect with ScholarSphere:
-Explore our repository: [link]
-Follow us on Twitter: [link]
-Connect on LinkedIn: [link]
