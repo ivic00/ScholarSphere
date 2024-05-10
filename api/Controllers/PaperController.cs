@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using api.DTOs.Paper;
 using api.Models;
@@ -16,8 +17,10 @@ namespace api.Controllers
     public class PaperController : ControllerBase
     {
         private readonly IPaperService _paperService;
-        public PaperController(IPaperService paperService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public PaperController(IPaperService paperService, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _paperService = paperService;
         }
 
@@ -55,7 +58,9 @@ namespace api.Controllers
         [HttpPost("AddPaper")]
         public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper(AddPaperDTO newPaper)
         {
-            return Ok(await _paperService.AddPaper(newPaper));
+            int AuthorId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            
+            return Ok(await _paperService.AddPaper(newPaper, AuthorId));
         }
 
         [HttpPut("UpdatePaper")]

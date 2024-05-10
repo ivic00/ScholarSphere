@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using api.DTOs.UserDTO;
+using api.Enums;
 using api.Models;
 using api.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,23 @@ namespace api.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpGet("GetAllUsersByRole")]
+        public async Task<ActionResult<ServiceResponse<List<GetUserDTO>>>> GetAllUsersByRole(UserRole role)
+        {
+            var serviceResponse = new ServiceResponse<List<GetUserDTO>>();
+
+            try
+            {
+                serviceResponse = await _userService.GetAllUsersByRole(role);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
+            return Ok(serviceResponse);
         }
 
     }

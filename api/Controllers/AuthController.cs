@@ -27,7 +27,7 @@ namespace api.Controllers
         public async Task<ActionResult<ServiceResponse<int>>> Register(RegisterUserDto request)
         {
             var response = await _authRepository.Register(
-                new User { UserName = request.UserName, FirstName = request.FirstName, LastName = request.LastName, Role = request.Role },
+                new User { UserName = request.UserName, FirstName = request.FirstName, LastName = request.LastName, Role = request.Role, Expertise = request.Expertise },
                 request.Password
             );
 

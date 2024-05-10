@@ -8,7 +8,11 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  InputLabel,
   Link,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
@@ -18,6 +22,7 @@ import { IRegisterUser } from "../../interfaces/IRegisterUser";
 import axiosInstance from "../../services/axiosInstance";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
 import { userRole } from "../../types/userRole";
+import axios from "axios";
 
 function RegisterForm() {
   const [role, setRole] = useState<userRole>();
@@ -26,6 +31,12 @@ function RegisterForm() {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const [sciFieldExpertise, setSciFieldExpertise] = useState<string[]>([]);
+  const [expertise, setExpertise] = useState<string>("");
+
+  const [sciFieldGroups, setSciFieldGroups] = useState<string[]>([]);
+  const [selectedFieldGroup, setSelectedFieldGroup] = useState<string>();
 
   const [serviceResponse, setServiceResponse] = useState<IServiceResponse>();
 
@@ -46,18 +57,26 @@ function RegisterForm() {
       setText(event.target.value);
     };
 
+  const handleSciFieldGroupChange = (event: SelectChangeEvent) => {
+    setSelectedFieldGroup(event.target.value);
+  };
+
+  const handleexpertiseChange = (event: SelectChangeEvent) => {
+    setExpertise(event.target.value);
+  };
+
   const handleRegister = async () => {
     if (!userName || !firstName || !lastName || !password || !role) {
       alert("please fill all informations and select role");
     } else {
       try {
-        console.log(userName + firstName + lastName + password);
         const response = await axiosInstance.post("/Auth/Register", {
           userName,
           firstName,
           lastName,
           password,
           role,
+          expertise
         });
         setServiceResponse(response.data);
       } catch (error: any) {
@@ -78,6 +97,35 @@ function RegisterForm() {
       }
     }
   }, [serviceResponse]);
+
+  useEffect(()=>{
+    const fetchExpertise = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "api/ScientificFields/fields/" + selectedFieldGroup
+        );
+        setSciFieldExpertise(response.data);
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    };
+
+    fetchExpertise();
+  }, [selectedFieldGroup])
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axiosInstance.get(
+          "/api/ScientificFields/groups"
+        );
+        setSciFieldGroups(response.data);
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    };
+    fetchGroups();
+  }, []);
 
   return (
     <div>
@@ -154,6 +202,42 @@ function RegisterForm() {
               <ToggleButton value={userRole.Author}>Author</ToggleButton>
               <ToggleButton value={userRole.Reviewer}>Reviewer</ToggleButton>
             </ToggleButtonGroup>
+          </Grid>
+          <Grid item xs={12}>
+            <InputLabel id="sciFieldGroupSelect">
+              Scientific Field Group
+            </InputLabel>
+            <Select
+              labelId="sciFieldGroupSelect"
+              id="demo-simple-select-standard"
+              value={selectedFieldGroup}
+              onChange={handleSciFieldGroupChange}
+              label="Scientific Field Group"
+              fullWidth
+            >
+              {sciFieldGroups.map((group, index) => (
+                <MenuItem key={index} value={group}>
+                  {group.replace(/([A-Z])/g, " $1").trim()}
+                </MenuItem>
+              ))}
+            </Select>
+            <br />
+            <br />
+            <InputLabel id="sciFieldSelect">Your Expertise</InputLabel>
+            <Select
+              labelId="sciFieldSelect"
+              id="demo-simple-select-standard"
+              value={expertise}
+              onChange={handleexpertiseChange}
+              label="Scientific Field Group"
+              fullWidth
+            >
+              {sciFieldExpertise.map((group, index) => (
+                <MenuItem key={index} value={group}>
+                  {group.replace(/([A-Z])/g, " $1").trim()}
+                </MenuItem>
+              ))}
+            </Select>
           </Grid>
         </Grid>
         <Button

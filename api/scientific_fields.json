@@ -1,0 +1,68 @@
+{
+  "ScientificFields": {
+    "PhysicalSciences": [
+      "Physics",
+      "Chemistry",
+      "Astronomy",
+      "Earth Science",
+      "Materials Science"
+    ],
+    "LifeSciences": ["Biology", "Zoology", "Botany", "Genetics", "Ecology"],
+    "EnvironmentalSciences": [
+      "Environmental Science",
+      "Environmental Engineering",
+      "Conservation Biology",
+      "Climate Science"
+    ],
+    "MathematicsAndStatistics": [
+      "Mathematics",
+      "Statistics",
+      "Applied Mathematics",
+      "Mathematical Physics"
+    ],
+    "ComputerAndInformationSciences": [
+      "Computer Science",
+      "Information Systems",
+      "Artificial Intelligence",
+      "Data Science",
+      "Quantum Computing"
+    ],
+    "EngineeringAndTechnology": [
+      "Mechanical Engineering",
+      "Electrical Engineering",
+      "Civil Engineering",
+      "Aerospace Engineering",
+      "Biomedical Engineering",
+      "Renewable Energy Technologies"
+    ],
+    "HealthSciences": [
+      "Medicine",
+      "Nursing",
+      "Pharmacology",
+      "Public Health",
+      "Epidemiology"
+    ],
+    "SocialSciences": [
+      "Psychology",
+      "Sociology",
+      "Anthropology",
+      "Economics",
+      "Political Science"
+    ],
+    "Humanities": [
+      "History",
+      "Literature",
+      "Philosophy",
+      "Linguistics",
+      "Cultural Studies"
+    ],
+    "InterdisciplinaryFields": [
+      "Bioinformatics",
+      "Biophysics",
+      "Astrobiology",
+      "Cognitive Science",
+      "Nanotechnology",
+      "Neurobiology"
+    ]
+  }
+}

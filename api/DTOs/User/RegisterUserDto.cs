@@ -13,5 +13,7 @@ namespace api.DTOs.UserDTO
         public string LastName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public UserRole Role { get; set; }
+        public string Expertise { get; set; }
+
     }
 }

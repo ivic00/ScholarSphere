@@ -61,13 +61,9 @@ const ScientificPaper = (props: { paper: IPaper }) => {
           <Typography variant="body1" color="initial">
             {paper?.fullText}
           </Typography>
-
-          <Rating
-            name="size-large"
-            defaultValue={2}
-            size="large"
-            precision={0.5}
-          />
+          <div>
+            
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -25,7 +25,6 @@ C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\staticwebassets.
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\staticwebassets.build.json
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\staticwebassets.development.json
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\scopedcss\bundle\api.styles.css
-C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\api.csproj.CopyComplete
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\api.dll
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\refint\api.dll
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\api.pdb
@@ -85,3 +84,6 @@ C:\Users\stefa\Diplomski rad\ScholarSphere\api\bin\Debug\net7.0\Microsoft.AspNet
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
 C:\Users\stefa\Diplomski rad\ScholarSphere\api\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\api.sourcelink.json
+C:\Users\stefa\Diplomski rad\ScholarSphere\api\obj\Debug\net7.0\api.csproj.Up2Date
+C:\Users\stefa\Diplomski rad\ScholarSphere\api\bin\Debug\net7.0\scientific_fields.json

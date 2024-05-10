@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.DTOs.UserDTO;
+using api.Enums;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,25 @@ namespace api.Services.UserService
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public async Task<ServiceResponse<List<GetUserDTO>>> GetAllUsersByRole(UserRole role)
+        {
+            var serviceResponse = new ServiceResponse<List<GetUserDTO>>();
+            try
+            {
+                var users = await _context.Users.Where(x => x.Role == role).ToListAsync();
+                serviceResponse.Message = $"users with role {role} successfully retrieved";
+                serviceResponse.Data = _mapper.Map<List<GetUserDTO>>(users);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+                throw;
+            }
+
+            return serviceResponse;
         }
         public async Task<ServiceResponse<GetUserDTO>> GetUserById(int Id)
         {

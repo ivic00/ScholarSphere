@@ -18,15 +18,7 @@ namespace api.Services.PaperService
 {
     public class PaperService : IPaperService
     {
-        private static string kwords = "Testing, Keywords, These, Are, Just, Testings";
-        private static List<Paper> papers = new List<Paper> {
-            new Paper(0, "Test Paper0", "Sho jun hi lao yao xi, fung hao, mi lao tr, fing shi",
-            /*new User(0, "AuthorTester23", "Stefan", "Ivic", UserRole.Author),*/
-            DateTime.Now, "", Keywords: kwords, FullText: "sklda ksdkja ksjdkajs dkjakjkjksj dkajksjd kajskdjak sjdkajs kdj"),
-            new Paper(1, "How to FAIL at YouTube", "I didnt know he was like that i swear...",
-            /*new User(1, "DDobrik", "David", "Dobrik", UserRole.Author),*/
-            DateTime.Now, "", Keywords: kwords, FullText: "sklda ksdkja ksjdkajs dkjakjkjksj dkajksjd kajskdjak sjdkajs kdj")
-        };
+
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -55,19 +47,6 @@ namespace api.Services.PaperService
 
             return serviceResponse;
         }
-
-        /* public async Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int Id)
-         {
-             var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
-             List<Paper> authPapers = new List<Paper>();
-
-             authPapers = papers.Where(x => x.Author.Id == Id).ToList();
-
-             serviceResponse.Data = authPapers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToList();
-
-             return serviceResponse;
-         }*/
-
         public async Task<ServiceResponse<GetPaperDTO>> GetPaper(int Id)
         {
             var serviceResponse = new ServiceResponse<GetPaperDTO>();
@@ -86,19 +65,28 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper)
+        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId)
         {
+
             var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
 
-            var paper = _mapper.Map<Paper>(newPaper);
-            paper.PublicationDate = DateTime.Now;
-            paper.Author = await _context.Users.FirstOrDefaultAsync(x => x.Id == newPaper.AuthorId);
+            try
+            {
+                var paper = _mapper.Map<Paper>(newPaper);
+                paper.PublicationDate = DateTime.Now;
+                paper.Author = await _context.Users.FirstOrDefaultAsync(x => x.Id == AuthorId);
 
-            _context.Papers.Add(paper);
-            await _context.SaveChangesAsync();
+                _context.Papers.Add(paper);
+                await _context.SaveChangesAsync();
 
-            serviceResponse.Message = "Paper uploaded successfully";
-            serviceResponse.Data = await _context.Papers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
+                serviceResponse.Message = "Paper uploaded successfully";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Failed to add paper: {ex.Message}";
+            }
+
             return serviceResponse;
         }
 
@@ -112,7 +100,7 @@ namespace api.Services.PaperService
                     throw new Exception($"Paper with Id: '{changedPaper.Id}' does not exist");
 
                 paper.Abstract = changedPaper.Abstract;
-                paper.FullText = changedPaper.FullText;
+                paper.ScientificField = changedPaper.ScientificField;
                 paper.Keywords = changedPaper.Keywords;
                 paper.PdfURL = changedPaper.PdfURL;
                 paper.Title = changedPaper.Title;

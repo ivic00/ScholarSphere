@@ -17,7 +17,6 @@ namespace api.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public List<Paper>? Papers { get; set; }
-
-
+        public string Expertise { get; set; }
     }
 }

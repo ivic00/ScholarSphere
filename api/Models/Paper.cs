@@ -12,14 +12,13 @@ namespace api.Models
         public string Title { get; set; }
         public string Abstract { get; set; }
         public string Keywords { get; set; }
-        public string FullText { get; set; }
-        //public User Author { get; set; }
+        public string ScientificField { get; set; }
         public DateTime PublicationDate { get; set; }
         public DateTime? LastEditDateTime { get; set; }
         public string PdfURL { get; set; }
         public User? Author { get; set; }
 
-        public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string FullText)
+        public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string ScientificField)
         {
             Id = id;
             this.Title = Title;
@@ -28,7 +27,7 @@ namespace api.Models
             this.PublicationDate = PublicationDate;
             this.PdfURL = PdfURL;
             this.Keywords = Keywords;
-            this.FullText = FullText;
+            this.ScientificField = ScientificField;
         }
 
         public Paper()

@@ -10,6 +10,7 @@ import {
   Alert,
   AlertTitle,
   Snackbar,
+  styled,
 } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import AddCircleOutlineTwoToneIcon from "@mui/icons-material/AddCircleOutlineTwoTone";
@@ -20,14 +21,27 @@ import { IAddPaper } from "../../interfaces/IAddPaper";
 import axiosInstance from "../../services/axiosInstance";
 import { IUser } from "../../interfaces/IUser";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
+import FieldSelect from "../FieldSelect/FieldSelect";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const link = backendLink + "Paper/AddPaper";
 
 function PaperUploadForm() {
+  const VisuallyHiddenInput = styled("input")`
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    white-space: nowrap;
+    width: 1px;
+  `;
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [keywords, setKeywords] = useState("");
-  const [fullText, setFullText] = useState("");
+  const [sciField, setSciField] = useState<string>("");
   const [incorrField, setincorr] = useState<string>("");
 
   const [titleCheck, setTitleCheck] = useState<boolean>(true);
@@ -42,7 +56,7 @@ function PaperUploadForm() {
       try {
         const response = await axiosInstance.get("/api/User/GetUserById");
         setUser(response.data.data);
-        console.log(user)
+        console.log(user);
       } catch (error) {
         console.error(error);
       }
@@ -53,10 +67,14 @@ function PaperUploadForm() {
 
   const [serviceResponse, setServiceResponse] = useState<IServiceResponse>();
 
+  const handleSciFieldChange = (value: string) => {
+    setSciField(value);
+  };
+
   useEffect(() => {
     if (serviceResponse?.message) {
       alert(serviceResponse.message);
-      window.location.href = "/Feed"
+      window.location.href = "/Feed";
     }
   }, [serviceResponse]);
 
@@ -67,7 +85,6 @@ function PaperUploadForm() {
         addPaperData
       );
       setServiceResponse(response.data);
-
     } catch (error: any) {
       setServiceResponse(error.response.data);
     }
@@ -77,8 +94,8 @@ function PaperUploadForm() {
     setTitleCheck(title === "");
     setAbstractCheck(abstract === "");
     setKeywordsCheck(keywords === "");
-    setFullTextCheck(fullText === "");
-  }, [title, abstract, keywords, fullText]);
+    setFullTextCheck(sciField === "");
+  }, [title, abstract, keywords, sciField]);
 
   async function handleSubmit(
     title: String,
@@ -95,21 +112,19 @@ function PaperUploadForm() {
     if (keywords == "") setKeywordsCheck(true);
     else setKeywordsCheck(false);
 
-    if (fullText == "") setFullTextCheck(true);
-    else setFullTextCheck(false);
-
     if (!titleCheck && !abstractCheck && !keywordsCheck && !fullTextCheck) {
       try {
-        console.log(user);
-        let addPaperData: IAddPaper = {
-          title: title,
-          abstract: abstract,
-          keywords: keywords,
-          fullText: fullText,
-          authorId: user.id,
-          pdfURL: "TestURL.com.url/nig",
-        };
-        addPaper(addPaperData);
+        const response = await axiosInstance.post("api/Paper/AddPaper", {
+          title,
+          abstract,
+          keywords,
+          scientificField: sciField,
+          pdfURL: "testUrl.com",
+        });
+
+        alert(response.data.message);
+
+        window.location.href = "/feed";
       } catch (error) {
         console.error(error);
       }
@@ -148,20 +163,19 @@ function PaperUploadForm() {
         />
         <br />
         <br />
-        <TextField
-          id="fullTextTbox"
-          label="Text"
-          variant="outlined"
-          color="primary"
-          value={fullText}
-          onChange={(e) => setFullText(e.target.value)}
-          multiline
-          rows={4}
-          error={fullTextCheck}
-          fullWidth
-          required
-        />
+        <Button
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+          startIcon={<CloudUploadIcon />}
+        >
+          Upload file
+          <VisuallyHiddenInput type="file" />
+        </Button>
         <br />
+        <br />
+        <FieldSelect onSciFieldChange={handleSciFieldChange} />
         <br />
         <TextField
           id="keywordsTbox"
@@ -183,7 +197,7 @@ function PaperUploadForm() {
           variant="contained"
           color="primary"
           fullWidth
-          onClick={() => handleSubmit(title, abstract, keywords, fullText)}
+          onClick={() => handleSubmit(title, abstract, keywords, sciField)}
         >
           Submit
         </Button>
