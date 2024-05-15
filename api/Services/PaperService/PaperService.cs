@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Data;
 using api.DTOs.Paper;
+using api.DTOs.Review;
 using api.Enums;
 using api.Models;
+using api.Services.ReviewService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +24,13 @@ namespace api.Services.PaperService
 
         private readonly IMapper _mapper;
         private readonly DataContext _context;
+        private readonly IReviewService _reviewService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PaperService(IMapper mapper, DataContext context)
+        public PaperService(IMapper mapper, DataContext context, IReviewService reviewService, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
+            _reviewService = reviewService;
             _context = context;
             _mapper = mapper;
         }
@@ -120,7 +127,7 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPaperDTO>>> DeleteCharacter(int id)
+        public async Task<ServiceResponse<List<GetPaperDTO>>> DeletePaper(int id)
         {
             ServiceResponse<List<GetPaperDTO>> serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
             try
@@ -143,6 +150,107 @@ namespace api.Services.PaperService
             }
 
             return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPublished(int pageNumber, int pageSize)
+        {
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
+            var query = _context.Papers.AsQueryable();
+
+            //bez uslova racuna i radove koji nisu objavljeni
+            var totalCount = await query.CountAsync(x => x.ForPublishing == true);
+
+            var papers = await query
+            .Where(x => x.ForPublishing == true)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => _mapper.Map<GetPaperDTO>(x))
+            .ToListAsync();
+
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var result = Tuple.Create(papers, totalPages);
+
+            serviceResponse.Data = result;
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField)
+        {
+            ServiceResponse<List<GetReviewDTO>> userReviews = new ServiceResponse<List<GetReviewDTO>>();
+
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
+            var query = _context.Papers.AsQueryable();
+
+            //bez uslova racuna i radove koji nisu objavljeni
+
+            userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
+
+            List<int> reviewedPaperIds = new List<int>();
+
+            if (userReviews.Data != null)
+            {
+                var totalCount = await query.CountAsync(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id) && x.ScientificField == scientificField);
+
+                reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+
+                var papers = await query
+                .Where(x => x.ForPublishing == false && x.ScientificField == scientificField && !reviewedPaperIds.Contains(x.Id))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => _mapper.Map<GetPaperDTO>(x))
+                .ToListAsync();
+
+
+
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var result = Tuple.Create(papers, totalPages);
+
+                serviceResponse.Data = result;
+                serviceResponse.Message = "User probably has reviews";
+                return serviceResponse;
+            }
+            else
+            {
+                var totalCount = await query.CountAsync(x => x.ForPublishing == false && x.ScientificField == scientificField);
+
+                var papers = await query
+               .Where(x => x.ForPublishing == false && x.ScientificField == scientificField)
+               .Skip((pageNumber - 1) * pageSize)
+               .Take(pageSize)
+               .Select(x => _mapper.Map<GetPaperDTO>(x))
+               .ToListAsync();
+
+
+
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var result = Tuple.Create(papers, totalPages);
+
+                serviceResponse.Data = result;
+                serviceResponse.Message = "Total Count = " + totalCount;
+                return serviceResponse;
+            }
+
+        }
+
+        //za badge
+        public async Task<ServiceResponse<int>> GetPendingCount()
+        {
+            int userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var response = new ServiceResponse<int>();
+
+            string scientificField = await _context.Users
+            .Where(x => x.Id == userId).Select(x => x.Expertise).FirstOrDefaultAsync();
+
+            var query = _context.Papers.AsQueryable();
+            //DODAJ UPIT AKO IMA REVIEW OD TOG KORISNIKA reviewService
+
+
+            response.Data = 1;
+            return response;
         }
     }
 }

@@ -97,7 +97,7 @@ export default function DrawerComponent(props: {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
+              <ListItemButton onClick={() => {window.location.href = '/ForReview'}}>
                 <ListItemIcon>
                   <RateReviewIcon />
                 </ListItemIcon>

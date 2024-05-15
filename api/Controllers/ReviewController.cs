@@ -26,7 +26,7 @@ namespace api.Controllers
         }
 
         [HttpGet("GetAllReviewsByUser")]
-        public async Task<ActionResult<ServiceResponse<List<GetReviewDTO>>>>  GetAllReviewsByUser()
+        public async Task<ActionResult<ServiceResponse<List<GetReviewDTO>>>> GetAllReviewsByUser()
         {
             int id = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
             return await _reviewService.GetAllReviewsByUser(id);
@@ -35,10 +35,6 @@ namespace api.Controllers
         [HttpPost("AddReview")]
         public async Task<ActionResult<ServiceResponse<GetReviewDTO>>> AddReview(AddReviewDTO addReviewDTO)
         {
-            int id = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            addReviewDTO.ReviewerId = id;
-
             return await _reviewService.AddReview(addReviewDTO);
         }
     }

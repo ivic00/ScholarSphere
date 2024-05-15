@@ -14,15 +14,20 @@ import {
   Divider,
   Rating,
 } from "@mui/material";
-import "../ScientificPaper/ScientificPaper.scss";
-import { backendLink } from "../../config";
+import "../SciPaperForReview/SciPaperForReview.scss";
+import ReviewUploadModal from "../ReviewUploadModal/ReviewUploadModal";
 
-const ScientificPaper = (props: { paper: IPaper }) => {
+const SciPaperForReview = (props: { paper: IPaper }) => {
   const [paper, setPaper] = useState<IPaper>();
+  const [paperId, setPaperId] = useState<number>(0);
 
   useEffect(() => {
     setPaper(props.paper);
   }, []);
+
+  useEffect(() => {
+    if (paper) setPaperId(paper.id);
+  }, [paper]);
 
   return (
     <div id="paperDiv">
@@ -62,7 +67,8 @@ const ScientificPaper = (props: { paper: IPaper }) => {
             {paper?.fullText}
           </Typography>
           <div>
-            
+            <ReviewUploadModal paperId={paperId} />
+            {paperId}
           </div>
         </CardContent>
       </Card>
@@ -70,4 +76,4 @@ const ScientificPaper = (props: { paper: IPaper }) => {
   );
 };
 
-export default ScientificPaper;
+export default SciPaperForReview;

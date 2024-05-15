@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Data;
 using api.DTOs.Review;
@@ -15,8 +16,10 @@ namespace api.Services.ReviewService
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public ReviewService(DataContext context, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ReviewService(DataContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _context = context;
 
@@ -25,7 +28,9 @@ namespace api.Services.ReviewService
         {
             var serviceResponse = new ServiceResponse<GetReviewDTO>();
 
-            if (await ReviewCheck(addReviewDTO.ReviewerId, addReviewDTO.PaperId))
+            int reviewerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            if (await ReviewCheck(reviewerId, addReviewDTO.PaperId))
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = "You already reviewed this paper";
@@ -36,13 +41,15 @@ namespace api.Services.ReviewService
                 {
                     Review review = _mapper.Map<Review>(addReviewDTO);
                     review.Paper = await _context.Papers.FirstOrDefaultAsync(x => x.Id == addReviewDTO.PaperId);
-                    review.Reviewer = await _context.Users.FirstOrDefaultAsync(x => x.Id == addReviewDTO.ReviewerId);
+                    review.Reviewer = await _context.Users.FirstOrDefaultAsync(x => x.Id == reviewerId);
+                    review.Approved = addReviewDTO.Approved;
                     review.SubmissionDate = DateTime.Now;
 
                     _context.Reviews.Add(review);
                     await _context.SaveChangesAsync();
 
                     serviceResponse.Data = _mapper.Map<GetReviewDTO>(_context.Entry(review).Entity);
+                    serviceResponse.Message = "Succesfully uploaded review!";
                 }
                 catch (Exception ex)
                 {
@@ -90,6 +97,7 @@ namespace api.Services.ReviewService
         }
 
 
+        //Da li je korisnik vec napisao recenziju
         private async Task<bool> ReviewCheck(int reviewerId, int paperId)
         {
             return await _context.Reviews

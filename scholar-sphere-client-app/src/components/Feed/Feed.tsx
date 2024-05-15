@@ -33,7 +33,7 @@ function Feed() {
   const getPapers = () => {
     const link: any =
       backendLink +
-      `Paper/GetAllPapers?pageNumber=${paginationParams?.pageNumber}&pageSize=${paginationParams?.pageSize}`;
+      `Paper/GetAllPublishedPapers?pageNumber=${paginationParams?.pageNumber}&pageSize=${paginationParams?.pageSize}`;
 
     fetch(link)
       .then((res) => res.json())

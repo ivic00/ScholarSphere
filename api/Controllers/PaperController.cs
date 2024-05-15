@@ -24,6 +24,33 @@ namespace api.Controllers
             _paperService = paperService;
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetAllPublishedPapers")]
+        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPublishedPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var tuple = await _paperService.GetAllPublished(pageNumber, pageSize);
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>()
+            {
+                Data = tuple.Data,
+                Success = tuple.Success,
+                Message = tuple.Message
+            };
+            return Ok(serviceResponse);
+        }
+
+        [HttpGet("GetAllPendingPapers")]
+        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPendingPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string scientificField = "Pharmacology")
+        {
+            var tuple = await _paperService.GetAllPending(pageNumber, pageSize, scientificField);
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>()
+            {
+                Data = tuple.Data,
+                Success = tuple.Success,
+                Message = tuple.Message
+            };
+            return Ok(serviceResponse);
+        }
+
         [HttpGet("GetPaperById")]
         public async Task<ActionResult<ServiceResponse<Paper>>> GetPaper(int Id)
         {
@@ -59,7 +86,7 @@ namespace api.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper(AddPaperDTO newPaper)
         {
             int AuthorId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            
+
             return Ok(await _paperService.AddPaper(newPaper, AuthorId));
         }
 
@@ -81,7 +108,7 @@ namespace api.Controllers
 
         public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> DeletePaper(int id)
         {
-            var response = await _paperService.DeleteCharacter(id);
+            var response = await _paperService.DeletePaper(id);
 
             if (response.Data == null)
             {
@@ -90,5 +117,7 @@ namespace api.Controllers
 
             return Ok(response);
         }
+
+
     }
 }

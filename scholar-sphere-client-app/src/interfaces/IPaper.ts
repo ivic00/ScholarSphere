@@ -1,5 +1,5 @@
 export interface IPaper {
-  id: Number;
+  id: number;
   title: String;
   abstract: String;
   keywords: String;

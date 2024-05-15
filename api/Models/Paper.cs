@@ -17,6 +17,7 @@ namespace api.Models
         public DateTime? LastEditDateTime { get; set; }
         public string PdfURL { get; set; }
         public User? Author { get; set; }
+        public bool ForPublishing { get; set; } = false;
 
         public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string ScientificField)
         {

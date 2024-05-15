@@ -23,6 +23,7 @@ import { IUser } from "../../interfaces/IUser";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
 import FieldSelect from "../FieldSelect/FieldSelect";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import userService from "../../services/userService";
 
 const link = backendLink + "Paper/AddPaper";
 
@@ -49,14 +50,12 @@ function PaperUploadForm() {
   const [keywordsCheck, setKeywordsCheck] = useState<boolean>(true);
   const [fullTextCheck, setFullTextCheck] = useState<boolean>(true);
 
-  const [user, setUser] = useState<IUser | any>();
+  const [user, setUser] = useState<IUser>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/api/User/GetUserById");
-        setUser(response.data.data);
-        console.log(user);
+        setUser(await userService.getUser());
       } catch (error) {
         console.error(error);
       }
@@ -134,74 +133,76 @@ function PaperUploadForm() {
   }
   return (
     <Card variant="outlined" className="formCard">
-      <CardContent>
-        <Typography variant="h5" color="initial">
-          Paper Upload
-        </Typography>
-        <br />
-        <TextField
-          id="titleTbox"
-          label="Title"
-          variant="standard"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          error={titleCheck}
-        />
-        <br />
-        <br />
-        <TextField
-          id="abstractTbox"
-          label="Abstract"
-          value={abstract}
-          onChange={(e) => setAbstract(e.target.value)}
-          fullWidth
-          multiline
-          required
-          error={abstractCheck}
-          rows={2}
-        />
-        <br />
-        <br />
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" />
-        </Button>
-        <br />
-        <br />
-        <FieldSelect onSciFieldChange={handleSciFieldChange} />
-        <br />
-        <TextField
-          id="keywordsTbox"
-          label="Keywords"
-          variant="standard"
-          color="primary"
-          helperText="please separate keywords with comma and space"
-          fullWidth
-          required
-          value={keywords}
-          error={keywordsCheck}
-          onChange={(e) => {
-            setKeywords(e.target.value);
-          }}
-        />
-        <br />
-        <br />
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={() => handleSubmit(title, abstract, keywords, sciField)}
-        >
-          Submit
-        </Button>
-      </CardContent>
+      {(user != undefined && user.role == 1) ? (
+        <CardContent>
+          <Typography variant="h5" color="initial">
+            Paper Upload
+          </Typography>
+          <br />
+          <TextField
+            id="titleTbox"
+            label="Title"
+            variant="standard"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            error={titleCheck}
+          />
+          <br />
+          <br />
+          <TextField
+            id="abstractTbox"
+            label="Abstract"
+            value={abstract}
+            onChange={(e) => setAbstract(e.target.value)}
+            fullWidth
+            multiline
+            required
+            error={abstractCheck}
+            rows={2}
+          />
+          <br />
+          <br />
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload file
+            <VisuallyHiddenInput type="file" />
+          </Button>
+          <br />
+          <br />
+          <FieldSelect onSciFieldChange={handleSciFieldChange} />
+          <br />
+          <TextField
+            id="keywordsTbox"
+            label="Keywords"
+            variant="standard"
+            color="primary"
+            helperText="please separate keywords with comma and space"
+            fullWidth
+            required
+            value={keywords}
+            error={keywordsCheck}
+            onChange={(e) => {
+              setKeywords(e.target.value);
+            }}
+          />
+          <br />
+          <br />
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={() => handleSubmit(title, abstract, keywords, sciField)}
+          >
+            Submit
+          </Button>
+        </CardContent>
+      ): (<div>As a Non-Author you can not post Scientific Papers</div>)}
     </Card>
   );
 }
