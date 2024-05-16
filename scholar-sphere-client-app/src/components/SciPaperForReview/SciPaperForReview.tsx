@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import "../SciPaperForReview/SciPaperForReview.scss";
 import ReviewUploadModal from "../ReviewUploadModal/ReviewUploadModal";
+import { WidthFull } from "@mui/icons-material";
 
 const SciPaperForReview = (props: { paper: IPaper }) => {
   const [paper, setPaper] = useState<IPaper>();
@@ -66,9 +67,8 @@ const SciPaperForReview = (props: { paper: IPaper }) => {
           <Typography variant="body1" color="initial">
             {paper?.fullText}
           </Typography>
-          <div>
+          <div className="write-review-btn">
             <ReviewUploadModal paperId={paperId} />
-            {paperId}
           </div>
         </CardContent>
       </Card>

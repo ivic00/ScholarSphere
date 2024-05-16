@@ -45,7 +45,7 @@ function ReviewUploadModal(props: { paperId: number }) {
       approved: approved,
       comments: comment,
     };
-    
+    console.log(props.paperId + " paperid");
     reviewService.postReview(newReview).then((res) => {
       if (res.success == false) alert(res.message);
       else {
@@ -56,7 +56,7 @@ function ReviewUploadModal(props: { paperId: number }) {
   };
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      <Button onClick={handleOpen} color="info" variant="outlined">Write Review</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -113,7 +113,7 @@ function ReviewUploadModal(props: { paperId: number }) {
           </div>
           <Button
             variant="contained"
-            color="secondary"
+            color="success"
             fullWidth
             onClick={handleSubmit}
           >

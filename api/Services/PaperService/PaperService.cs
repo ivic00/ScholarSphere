@@ -187,13 +187,13 @@ namespace api.Services.PaperService
 
             userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
 
-            List<int> reviewedPaperIds = new List<int>();
+            List<int> reviewedPaperIds;
 
             if (userReviews.Data != null)
             {
-                var totalCount = await query.CountAsync(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id) && x.ScientificField == scientificField);
-
                 reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+                
+                var totalCount = await query.CountAsync(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id) && x.ScientificField == scientificField);
 
                 var papers = await query
                 .Where(x => x.ForPublishing == false && x.ScientificField == scientificField && !reviewedPaperIds.Contains(x.Id))
@@ -243,11 +243,13 @@ namespace api.Services.PaperService
             var response = new ServiceResponse<int>();
 
             string scientificField = await _context.Users
-            .Where(x => x.Id == userId).Select(x => x.Expertise).FirstOrDefaultAsync();
+            .Where(x => x.Id == userId)
+            .Select(x => x.Expertise)
+            .FirstOrDefaultAsync();
 
             var query = _context.Papers.AsQueryable();
-            //DODAJ UPIT AKO IMA REVIEW OD TOG KORISNIKA reviewService
 
+            //DODAJ UPIT AKO IMA REVIEW OD TOG KORISNIKA reviewService
 
             response.Data = 1;
             return response;

@@ -68,7 +68,9 @@ namespace api.Services.ReviewService
 
             try
             {
-                var reviews = await _context.Reviews.Where(x => x.Reviewer.Id == userId).ToListAsync();
+                var reviews = await _context.Reviews
+                .Include(x => x.Paper)
+                .Where(x => x.Reviewer.Id == userId).ToListAsync();
 
                 if (reviews.IsNullOrEmpty())
                 {
