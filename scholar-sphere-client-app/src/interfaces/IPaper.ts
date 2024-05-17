@@ -3,7 +3,8 @@ export interface IPaper {
   title: String;
   abstract: String;
   keywords: String;
-  publicationDateTime: Date;
-  fullText: String;
+  publicationDate: Date;
+  scientificField: String;
+  forPublishing: boolean;
   pdfUrl: String;
 }

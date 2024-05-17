@@ -24,7 +24,7 @@ import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import Feed from "../Feed/Feed";
 import Home from "../Home/Home";
 import userService from "../../services/userService";
-
+import { glassyBackgroundPrimary } from "../../Themes/mainTheme";
 const NavBar = () => {
   const [user, setUser] = useState<IUser>();
   const [token, setToken] = useState<string>();
@@ -60,7 +60,7 @@ const NavBar = () => {
   }, []);
 
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" sx={{ ...glassyBackgroundPrimary }}>
       <Container>
         <Toolbar disableGutters>
           <SchoolIcon
@@ -170,10 +170,18 @@ const NavBar = () => {
               <DrawerComponent username={user?.userName} />
             ) : (
               <div>
-                <Button href="/signin" variant="contained">
+                <Button
+                  sx={{ ...glassyBackgroundPrimary }}
+                  href="/signin"
+                  variant="contained"
+                >
                   Sign in
                 </Button>
-                <Button href="/register" variant="contained">
+                <Button
+                  sx={{ ...glassyBackgroundPrimary }}
+                  href="/register"
+                  variant="contained"
+                >
                   Register
                 </Button>
               </div>

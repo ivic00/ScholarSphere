@@ -13,7 +13,7 @@ namespace api.Services.PaperService
         Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField);
         Task<ServiceResponse<int>> GetPendingCount();
         Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize);
-        //Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int Id);
+        Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int userId);
         Task<ServiceResponse<GetPaperDTO>> GetPaper(int Id);
         Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId);
         Task<ServiceResponse<GetPaperDTO>> UpdatePaper(UpdatePaperDTO newPaper);

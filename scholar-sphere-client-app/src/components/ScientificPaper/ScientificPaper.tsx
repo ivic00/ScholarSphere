@@ -58,9 +58,6 @@ const ScientificPaper = (props: { paper: IPaper }) => {
             File Here
           </Typography>
           <Divider />
-          <Typography variant="body1" color="initial">
-            {paper?.fullText}
-          </Typography>
           <div>
             
           </div>

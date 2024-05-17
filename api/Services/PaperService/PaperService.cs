@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Data;
@@ -26,13 +27,15 @@ namespace api.Services.PaperService
         private readonly DataContext _context;
         private readonly IReviewService _reviewService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHostEnvironment _webHostingEnvironment;
 
-        public PaperService(IMapper mapper, DataContext context, IReviewService reviewService, IHttpContextAccessor httpContextAccessor)
+        public PaperService(IMapper mapper, DataContext context, IReviewService reviewService, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment webHostingEnvironment)
         {
             _httpContextAccessor = httpContextAccessor;
             _reviewService = reviewService;
             _context = context;
             _mapper = mapper;
+            _webHostingEnvironment = webHostingEnvironment;
         }
         public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize)
         {
@@ -72,16 +75,40 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId)
+        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId )
         {
 
             var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
 
             try
             {
+                var file = newPaper.File;
                 var paper = _mapper.Map<Paper>(newPaper);
                 paper.PublicationDate = DateTime.Now;
                 paper.Author = await _context.Users.FirstOrDefaultAsync(x => x.Id == AuthorId);
+
+                if (file != null && file.Length > 0)
+                {
+                    
+                    string uploadsFolder = Path.Combine(_webHostingEnvironment.ContentRootPath, "Uploads");
+
+                    
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    paper.PdfURL = filePath;
+                }
 
                 _context.Papers.Add(paper);
                 await _context.SaveChangesAsync();
@@ -192,7 +219,7 @@ namespace api.Services.PaperService
             if (userReviews.Data != null)
             {
                 reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
-                
+
                 var totalCount = await query.CountAsync(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id) && x.ScientificField == scientificField);
 
                 var papers = await query
@@ -253,6 +280,35 @@ namespace api.Services.PaperService
 
             response.Data = 1;
             return response;
+        }
+
+        public async Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int userId)
+        {
+
+            var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
+
+            try
+            {
+                var papers = await _context.Papers.Where(x => x.Author.Id == userId).Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
+
+                serviceResponse.Data = papers;
+
+                if (papers.Count != 0)
+                    serviceResponse.Message = "Your papers successfully retrieved";
+                else
+                {
+                    serviceResponse.Message = "You have no Papers";
+                    serviceResponse.Success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+            throw new NotImplementedException();
         }
     }
 }

@@ -76,14 +76,16 @@ namespace api.Controllers
             return Ok(serviceResponse);
         }
 
-        /*[HttpGet("GetAllFromAuthor")]
-        public async Task<ActionResult<ServiceResponse<List<Paper>>>> GetAllFromAuthor(int Id)
+        [HttpGet("GetAllFromAuthor")]
+        public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> GetAllFromAuthor()
         {
-            return Ok(await _paperService.GetAllFromAuthor(Id));
-        }*/
+            int userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            return Ok(await _paperService.GetAllFromAuthor(userId));
+        }
 
         [HttpPost("AddPaper")]
-        public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper(AddPaperDTO newPaper)
+        public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper([FromForm]AddPaperDTO newPaper)
         {
             int AuthorId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 

@@ -1,19 +1,27 @@
 import { ThemeOptions, createTheme } from "@mui/material";
+const glassyBackgroundPrimary = {
+  background: "rgba(38, 166, 154, 0.5);",
+  borderRadius: "16px",
+  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+  backdropFilter: "blur(4.3px)",
+  "-webkit-backdrop-filter": "blur(4.3px)",
+};
+const glassyBackground = {
+  background: "rgba(255, 255, 255, 0.5);",
+  borderRadius: "16px",
+  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+  backdropFilter: "blur(4px)",
+  "-webkit-backdrop-filter": "blur(4.3px)",
 
+}
 export const themeOptions: ThemeOptions = {
   palette: {
     mode: "light",
     primary: {
-      main: "#ff4545",
-      light: "#ff6a6a",
-      dark: "#b23030",
-      contrastText: "#ffffff",
+      main: "#26a69a",
     },
     secondary: {
-      main: "#45fdff",
-      light: "#6afdff",
-      dark: "#30b1b2",
-      contrastText: "rgba(0,0,0,0.87)",
+      main: "#A62632",
     },
     error: {
       main: "#c70009",
@@ -37,7 +45,7 @@ export const themeOptions: ThemeOptions = {
     text: {
       primary: "rgba(0,0,0,0.87)",
       secondary: "#000000",
-      disabled: "#000000"
+      disabled: "#000000",
     },
     background: {
       default: "#ffffff",
@@ -56,7 +64,48 @@ export const themeOptions: ThemeOptions = {
     },
     fontFamily: "Roboto Mono",
   },
+  components: {
+    MuiAppBar: {
+      defaultProps: {
+        elevation: 5,
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+          marginRight: "2.5vw",
+          marginTop: "1.5vh",
+          width: "95%",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+        },
+      },
+    },
+    MuiButtonGroup: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          borderBottomLeftRadius: "25px",
+          borderTopLeftRadius: "25px",
+          boxShadow: 'none',
+          backgroundColor: "rgba(255, 255, 255, 1)"
+        },
+      },
+    },
+  },
 };
 const mainTheme = createTheme(themeOptions);
 
+export { glassyBackgroundPrimary };
+export { glassyBackground };
 export default mainTheme;

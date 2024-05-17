@@ -1,8 +1,9 @@
-export interface IAddPaper {
+export interface IUpdatePaper {
+  id: 0;
   title: String;
   abstract: String;
   keywords: String;
   scientificField: String;
-  file: File;
   pdfURL: String;
+  forPublishing: false;
 }

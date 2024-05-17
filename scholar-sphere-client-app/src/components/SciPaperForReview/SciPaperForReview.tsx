@@ -64,9 +64,6 @@ const SciPaperForReview = (props: { paper: IPaper }) => {
             File Here
           </Typography>
           <Divider />
-          <Typography variant="body1" color="initial">
-            {paper?.fullText}
-          </Typography>
           <div className="write-review-btn">
             <ReviewUploadModal paperId={paperId} />
           </div>

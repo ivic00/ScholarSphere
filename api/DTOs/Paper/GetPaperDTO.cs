@@ -15,5 +15,6 @@ namespace api.DTOs.Paper
         public string ScientificField { get; set; }
         public DateTime PublicationDate { get; set; }
         public string PdfURL { get; set; }
+        public bool ForPublishing { get; set; } = false;
     }
 }

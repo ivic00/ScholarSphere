@@ -14,13 +14,15 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import BookIcon from "@mui/icons-material/Book";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import ArticleIcon from '@mui/icons-material/Article';
+import ArticleIcon from "@mui/icons-material/Article";
 import ReviewsIcon from "@mui/icons-material/Reviews";
-import PeopleIcon from '@mui/icons-material/People';
+import PeopleIcon from "@mui/icons-material/People";
 import { useEffect, useState } from "react";
 import { IUser } from "../../interfaces/IUser";
 import userService from "../../services/userService";
 import { userRole } from "../../types/userRole";
+import { glassyBackgroundPrimary } from "../../Themes/mainTheme";
+import { glassyBackground } from "../../Themes/mainTheme";
 
 export default function DrawerComponent(props: {
   username: string | undefined;
@@ -61,7 +63,11 @@ export default function DrawerComponent(props: {
         {user?.role === userRole.Author && (
           <>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
+              <ListItemButton
+                onClick={() => {
+                  window.location.href = "/MyPapers";
+                }}
+              >
                 <ListItemIcon>
                   <BookIcon />
                 </ListItemIcon>
@@ -97,7 +103,11 @@ export default function DrawerComponent(props: {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => {window.location.href = '/ForReview'}}>
+              <ListItemButton
+                onClick={() => {
+                  window.location.href = "/ForReview";
+                }}
+              >
                 <ListItemIcon>
                   <RateReviewIcon />
                 </ListItemIcon>
@@ -127,7 +137,6 @@ export default function DrawerComponent(props: {
           </>
         )}
       </List>
-      <Divider />
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={handleSignOut}>
@@ -144,13 +153,14 @@ export default function DrawerComponent(props: {
   return (
     <div>
       <Button
+        sx={{ ...glassyBackgroundPrimary }}
         variant="contained"
         endIcon={<AccountBoxIcon />}
         onClick={toggleDrawer(true)}
       >
         {props.username}
       </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">
+      <Drawer sx={{...glassyBackground}} open={open} onClose={toggleDrawer(false)} anchor="right">
         {DrawerList}
       </Drawer>
     </div>

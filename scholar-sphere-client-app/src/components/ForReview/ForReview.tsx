@@ -30,6 +30,7 @@ function ForReview() {
       setUser(await userService.getUser());
     };
     fetchData();
+    getPapers();
   }, []);
 
   useEffect(() => {

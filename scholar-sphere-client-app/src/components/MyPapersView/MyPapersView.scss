@@ -1,0 +1,28 @@
+$gradient: linear-gradient(
+  38deg,
+  rgba(254, 255, 0, 1) 0%,
+  rgba(222, 170, 37, 1) 50%,
+  rgba(254, 255, 0, 1) 100%
+);
+$border-width: 3px;
+
+.review-paper {
+  position: relative;
+  padding: $border-width;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: $border-width;
+    background: $gradient;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none; 
+    z-index: -1;
+  }
+}

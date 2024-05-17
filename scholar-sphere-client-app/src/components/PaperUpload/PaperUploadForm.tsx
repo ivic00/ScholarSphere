@@ -24,26 +24,17 @@ import { IServiceResponse } from "../../interfaces/IServiceResponse";
 import FieldSelect from "../FieldSelect/FieldSelect";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import userService from "../../services/userService";
+import UploadFileButton from "../UploadFileButton/UploadFileButton";
+import paperService from "../../services/paperService";
+import { IPaper } from "../../interfaces/IPaper";
 
 const link = backendLink + "Paper/AddPaper";
 
 function PaperUploadForm() {
-  const VisuallyHiddenInput = styled("input")`
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    white-space: nowrap;
-    width: 1px;
-  `;
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [keywords, setKeywords] = useState("");
   const [sciField, setSciField] = useState<string>("");
-  const [incorrField, setincorr] = useState<string>("");
 
   const [titleCheck, setTitleCheck] = useState<boolean>(true);
   const [abstractCheck, setAbstractCheck] = useState<boolean>(true);
@@ -51,6 +42,7 @@ function PaperUploadForm() {
   const [fullTextCheck, setFullTextCheck] = useState<boolean>(true);
 
   const [user, setUser] = useState<IUser>();
+  const [file, setFile] = useState<File>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +60,11 @@ function PaperUploadForm() {
 
   const handleSciFieldChange = (value: string) => {
     setSciField(value);
+  };
+
+  const handleFileChange = (value: File) => {
+    setFile(value);
+    console.log(file);
   };
 
   useEffect(() => {
@@ -100,7 +97,7 @@ function PaperUploadForm() {
     title: String,
     abstract: String,
     keywords: String,
-    fullText: String
+    scientificField: String
   ) {
     if (title == "") setTitleCheck(true);
     else setTitleCheck(false);
@@ -111,21 +108,29 @@ function PaperUploadForm() {
     if (keywords == "") setKeywordsCheck(true);
     else setKeywordsCheck(false);
 
-    if (!titleCheck && !abstractCheck && !keywordsCheck && !fullTextCheck) {
+    if (!titleCheck && !abstractCheck && !keywordsCheck && !fullTextCheck && file) {
       try {
-        const response = await axiosInstance.post("api/Paper/AddPaper", {
+        const paper: IAddPaper = {
           title,
           abstract,
           keywords,
           scientificField: sciField,
-          pdfURL: "testUrl.com",
-        });
+          pdfURL: "",
+          file: file
+        };
+        if (file) {
+          const serviceResponse: IServiceResponse = await paperService.addPaper(
+            paper
+          );
 
-        alert(response.data.message);
+          alert(serviceResponse.message);
 
-        window.location.href = "/feed";
+          if (serviceResponse.success) window.location.href = "/feed";
+        } else {
+          alert("No File selected");
+        }
       } catch (error) {
-        console.error(error);
+        alert(error);
       }
     } else {
       alert("Incorrect input");
@@ -133,7 +138,7 @@ function PaperUploadForm() {
   }
   return (
     <Card variant="outlined" className="formCard">
-      {(user != undefined && user.role == 1) ? (
+      {user != undefined && user.role == 1 ? (
         <CardContent>
           <Typography variant="h5" color="initial">
             Paper Upload
@@ -163,16 +168,7 @@ function PaperUploadForm() {
           />
           <br />
           <br />
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
-            <VisuallyHiddenInput type="file" />
-          </Button>
+          <UploadFileButton onFileChange={handleFileChange} /> {file?.name}
           <br />
           <br />
           <FieldSelect onSciFieldChange={handleSciFieldChange} />
@@ -202,7 +198,9 @@ function PaperUploadForm() {
             Submit
           </Button>
         </CardContent>
-      ): (<div>As a Non-Author you can not post Scientific Papers</div>)}
+      ) : (
+        <div>As a Non-Author you can not post Scientific Papers</div>
+      )}
     </Card>
   );
 }

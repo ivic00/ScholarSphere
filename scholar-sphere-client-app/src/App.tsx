@@ -13,6 +13,8 @@ import { IJwt } from "./interfaces/IJWT";
 import axiosInstance from "./services/axiosInstance";
 import Home from "./components/Home/Home";
 import ForReview from "./components/ForReview/ForReview";
+import UserPapersView from "./components/MyPapersView/MyPapersView";
+import MyPapersView from "./components/MyPapersView/MyPapersView";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -39,6 +41,7 @@ function App() {
               <Route path="/Register" Component={RegisterForm} />
               <Route path="/PaperUpload" Component={PaperUploadForm} />
               <Route path="/ForReview" Component={ForReview}/>
+              <Route path="/MyPapers" Component={MyPapersView}/>
             </Routes>
           </BrowserRouter>
         </div>
