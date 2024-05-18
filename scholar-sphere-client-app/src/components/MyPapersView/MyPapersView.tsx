@@ -74,10 +74,13 @@ function MyPapersView() {
                     <Typography variant="h5" component="div">
                       {paper.title}
                     </Typography>
+                    <br />
+                    <Typography variant="caption">Abstract:</Typography>
+                    <Typography variant="body1">{paper.abstract}</Typography>
+                    <br />
                     <Typography variant="caption" color="initial">
                       Keywords:{" "}
                     </Typography>
-                    <br />
                     {paper?.keywords.split(", ").map((keyword, index) => (
                       <Chip
                         key={index}
@@ -90,16 +93,17 @@ function MyPapersView() {
                     ))}
                     <br />
                     <br />
-                    <Typography variant="caption">Abstract:</Typography>
-                    <Typography variant="body1">{paper.abstract}</Typography>
-                    <br />
                     <Typography variant="caption" color="initial">
                       {paper.publicationDate.toString()}
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="large" color="info" variant="outlined">View Reviews</Button>
-                    {!paper.forPublishing && <EditPaperModal paperForEdit={paper}/>}
+                    <Button size="large" color="info" variant="outlined">
+                      View Reviews
+                    </Button>
+                    {!paper.forPublishing && (
+                      <EditPaperModal paperForEdit={paper} />
+                    )}
                   </CardActions>
                 </Paper>
               </React.Fragment>

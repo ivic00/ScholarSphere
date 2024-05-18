@@ -17,13 +17,22 @@ import {
 import "../SciPaperForReview/SciPaperForReview.scss";
 import ReviewUploadModal from "../ReviewUploadModal/ReviewUploadModal";
 import { WidthFull } from "@mui/icons-material";
+import { IUser } from "../../interfaces/IUser";
+import userService from "../../services/userService";
 
 const SciPaperForReview = (props: { paper: IPaper }) => {
-  const [paper, setPaper] = useState<IPaper>();
+  const [paper, setPaper] = useState<IPaper>(props.paper);
   const [paperId, setPaperId] = useState<number>(0);
+  const [user, setUser] = useState<IUser>();
+
+  async function handleAuthor() {
+    const response = await userService.getPaperAuthor(paper.id);
+    setUser(response.data);
+  }
 
   useEffect(() => {
     setPaper(props.paper);
+    handleAuthor();
   }, []);
 
   useEffect(() => {
@@ -34,9 +43,19 @@ const SciPaperForReview = (props: { paper: IPaper }) => {
     <div id="paperDiv">
       <Card variant="elevation" elevation={3}>
         <CardContent>
-          <Typography variant="h5" color="textPrimary">
-            {paper?.title}
+          <b>
+            <Typography
+              variant="h5"
+              color="textPrimary"
+              sx={{ fontWeight: "bold" }}
+            >
+              {paper?.title}
+            </Typography>
+          </b>
+          <Typography variant="subtitle1" sx={{ color: "gray" }}>
+            {user?.firstName} {user?.lastName}
           </Typography>
+          <br />
           <Typography variant="subtitle1" color="Highlight">
             Abstract
           </Typography>

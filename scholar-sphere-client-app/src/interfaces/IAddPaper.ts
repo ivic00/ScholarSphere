@@ -1,8 +1,8 @@
 export interface IAddPaper {
-  title: String;
-  abstract: String;
-  keywords: String;
-  scientificField: String;
+  title: string;
+  abstract: string;
+  keywords: string;
+  scientificField: string;
   file: File;
-  pdfURL: String;
+  pdfURL: string;
 }

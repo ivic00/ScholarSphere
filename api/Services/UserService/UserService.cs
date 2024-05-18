@@ -64,11 +64,11 @@ namespace api.Services.UserService
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == Username);
-                
-                if(user is null)
+
+                if (user is null)
                     throw new Exception($"User with username: '{Username}' does not exist");
                 serviceResponse.Data = _mapper.Map<GetUserDTO>(user);
-                
+
             }
             catch (Exception ex)
             {
@@ -77,6 +77,36 @@ namespace api.Services.UserService
             }
 
             return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetUserDTO>> GetPaperAuthor(int paperId)
+        {
+            var serviceResponse = new ServiceResponse<GetUserDTO>();
+
+            try
+            {
+                Paper paper = await _context.Papers.Include(x => x.Author).FirstOrDefaultAsync(x => x.Id == paperId);
+                if (paper == null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Paper doesnt exist";
+                    return serviceResponse;
+                }
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == paper.Author.Id);
+
+                serviceResponse.Data = _mapper.Map<GetUserDTO>(user);
+                serviceResponse.Message = "Author retrieved successfuly";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                return serviceResponse;
+            }
+
+            return serviceResponse;
+
         }
     }
 }

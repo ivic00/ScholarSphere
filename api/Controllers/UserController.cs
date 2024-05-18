@@ -44,6 +44,14 @@ namespace api.Controllers
             return Ok(user);
         }
 
+        [HttpGet("GetPaperAuthor")]
+        public async Task<ActionResult<ServiceResponse<GetUserDTO>>> GetPaperAuthor(int paperId)
+        {
+            var user = await _userService.GetPaperAuthor(paperId);
+
+            return Ok(user);
+        }
+
         [HttpGet("GetAllUsersByRole")]
         public async Task<ActionResult<ServiceResponse<List<GetUserDTO>>>> GetAllUsersByRole(UserRole role)
         {

@@ -16,21 +16,36 @@ import {
 } from "@mui/material";
 import "../ScientificPaper/ScientificPaper.scss";
 import { backendLink } from "../../config";
+import { IUser } from "../../interfaces/IUser";
+import userService from "../../services/userService";
 
 const ScientificPaper = (props: { paper: IPaper }) => {
-  const [paper, setPaper] = useState<IPaper>();
+  const [paper, setPaper] = useState<IPaper>(props.paper);
+  const [user, setUser] = useState<IUser>();
 
+  async function handleAuthor() {
+    const response = await userService.getPaperAuthor(paper.id);
+    setUser(response.data);
+  };
+  
   useEffect(() => {
     setPaper(props.paper);
+    handleAuthor();
   }, []);
 
   return (
     <div id="paperDiv">
       <Card variant="elevation" elevation={3}>
         <CardContent>
-          <Typography variant="h5" color="textPrimary">
-            {paper?.title}
+          <b>
+            <Typography variant="h5" color="textPrimary" sx={{fontWeight: 'bold'}}>
+              {paper?.title}
+            </Typography>
+          </b>
+          <Typography variant="subtitle1" sx={{color: 'gray'}}>
+            {user?.firstName} {user?.lastName}
           </Typography>
+          <br />
           <Typography variant="subtitle1" color="Highlight">
             Abstract
           </Typography>
@@ -58,9 +73,7 @@ const ScientificPaper = (props: { paper: IPaper }) => {
             File Here
           </Typography>
           <Divider />
-          <div>
-            
-          </div>
+          <div></div>
         </CardContent>
       </Card>
     </div>

@@ -108,6 +108,8 @@ namespace api.Services.PaperService
                     }
 
                     paper.PdfURL = filePath;
+                    paper.OriginalFileName = file.FileName;
+                    paper.MimeType = file.ContentType;
                 }
 
                 _context.Papers.Add(paper);

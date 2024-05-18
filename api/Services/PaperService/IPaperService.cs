@@ -15,6 +15,7 @@ namespace api.Services.PaperService
         Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize);
         Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int userId);
         Task<ServiceResponse<GetPaperDTO>> GetPaper(int Id);
+        // Task<ServiceResponse<File>> DownloadPaper(int id);
         Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId);
         Task<ServiceResponse<GetPaperDTO>> UpdatePaper(UpdatePaperDTO newPaper);
         Task<ServiceResponse<List<GetPaperDTO>>> DeletePaper(int id);

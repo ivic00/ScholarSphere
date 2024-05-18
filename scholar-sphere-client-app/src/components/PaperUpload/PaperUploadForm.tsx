@@ -94,10 +94,10 @@ function PaperUploadForm() {
   }, [title, abstract, keywords, sciField]);
 
   async function handleSubmit(
-    title: String,
-    abstract: String,
-    keywords: String,
-    scientificField: String
+    title: string,
+    abstract: string,
+    keywords: string,
+    scientificField: string
   ) {
     if (title == "") setTitleCheck(true);
     else setTitleCheck(false);
@@ -115,7 +115,7 @@ function PaperUploadForm() {
           abstract,
           keywords,
           scientificField: sciField,
-          pdfURL: "",
+          pdfURL: "thisChanges",
           file: file
         };
         if (file) {

@@ -85,12 +85,32 @@ namespace api.Controllers
         }
 
         [HttpPost("AddPaper")]
-        public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper([FromForm]AddPaperDTO newPaper)
+        public async Task<ActionResult<ServiceResponse<List<GetPaperDTO>>>> AddPaper([FromForm] AddPaperDTO newPaper)
         {
             int AuthorId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             return Ok(await _paperService.AddPaper(newPaper, AuthorId));
         }
+
+        /*[HttpGet("DownloadPaper/{id}")]
+        public async Task<IActionResult> DownloadPaper(int id)
+        {
+            var paper = await _context.Papers.FindAsync(id);
+            if (paper == null || string.IsNullOrEmpty(paper.PdfURL))
+            {
+                return NotFound();
+            }
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(paper.PdfURL, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, paper.MimeType, paper.OriginalFileName);
+        }*/
+
 
         [HttpPut("UpdatePaper")]
 

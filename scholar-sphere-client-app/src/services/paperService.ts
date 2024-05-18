@@ -24,11 +24,18 @@ class PaperService {
     return serviceResponse;
   }
 
-  public async addPaper(
-    paper: IAddPaper
-  ): Promise<IServiceResponse> {
+  public async addPaper(paper: IAddPaper): Promise<IServiceResponse> {
     const formData = new FormData();
-    formData.append("addPaperDTO", JSON.stringify(paper));
+
+     formData.append("title", paper.title);
+     formData.append("abstract", paper.abstract);
+     formData.append("scientificField", paper.scientificField);
+     formData.append("keywords", paper.keywords)
+     formData.append("pdfURL", paper.pdfURL);
+
+     /*const fileBlob = new Blob([paper.file], {type: "application/pdf"});
+     formData.append("file", fileBlob);*/
+     formData.append("file", paper.file, paper.file.name)
 
     const response = await axiosInstance.post("api/Paper/AddPaper", formData, {
       headers: {
@@ -42,6 +49,8 @@ class PaperService {
       message: response.data.message,
       success: response.data.success,
     };
+
+    console.log(formData);
     return serviceResponse;
   }
 

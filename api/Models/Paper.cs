@@ -16,10 +16,12 @@ namespace api.Models
         public DateTime PublicationDate { get; set; }
         public DateTime? LastEditDateTime { get; set; }
         public string PdfURL { get; set; }
+        public string OriginalFileName { get; set; }
+        public string MimeType { get; set; }
         public User? Author { get; set; }
         public bool ForPublishing { get; set; } = false;
 
-        public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string ScientificField)
+        public Paper(int id, string Title, string Abstract/*, User Author*/, DateTime PublicationDate, string PdfURL, string Keywords, string ScientificField, string OriginalFileName, string MimeType)
         {
             Id = id;
             this.Title = Title;
@@ -29,6 +31,8 @@ namespace api.Models
             this.PdfURL = PdfURL;
             this.Keywords = Keywords;
             this.ScientificField = ScientificField;
+            this.OriginalFileName = OriginalFileName;
+            this.MimeType = MimeType;
         }
 
         public Paper()

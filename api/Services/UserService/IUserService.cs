@@ -13,6 +13,7 @@ namespace api.Services.UserService
         Task<ServiceResponse<GetUserDTO>> GetUserById(int id);
         Task<ServiceResponse<GetUserDTO>> GetUserByUsername(string Username);
         Task<ServiceResponse<List<GetUserDTO>>> GetAllUsersByRole(UserRole role);
+        Task<ServiceResponse<GetUserDTO>> GetPaperAuthor(int paperId);
 
     }
 }
