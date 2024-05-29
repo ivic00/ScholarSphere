@@ -1,0 +1,4 @@
+u review dodati i opciju za reviziju, cekanje da se doradi, umesto like dislike nesto kao accept i reject
+sifrovan naziv fajlova
+
+obavezno raditi na recenzijama i vise recenzija od jednog rew

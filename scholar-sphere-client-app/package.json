@@ -21,6 +21,7 @@
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.5.0",
     "css-select": "^5.1.0",
+    "file-saver": "^2.0.5",
     "jwt-decode": "^4.0.0",
     "nth-check": "^2.1.1",
     "react": "^18.2.0",
@@ -56,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "sass": "^1.66.1"
   }
 }

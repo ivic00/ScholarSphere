@@ -8,13 +8,15 @@ import {
 } from "@mui/material";
 import "../ReviewUploadModal/ReviewUploadModal.scss";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import { BorderAllRounded, ThumbUpAltOutlined } from "@mui/icons-material";
-import { ThumbUpAlt } from "@mui/icons-material";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { ThumbDownAlt } from "@mui/icons-material";
 import { ThumbDownAltOutlined } from "@mui/icons-material";
 import reviewService from "../../services/reviewService";
 import { IReview } from "../../interfaces/IReview";
+import { IPaper } from "../../interfaces/IPaper";
 
 const style = {
   position: "absolute" as "absolute",
@@ -28,7 +30,7 @@ const style = {
   p: 4,
 };
 
-function ReviewUploadModal(props: { paperId: number }) {
+function ReviewUploadModal(props: { paper: IPaper }) {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -41,22 +43,21 @@ function ReviewUploadModal(props: { paperId: number }) {
     console.log(typeof approved);
     console.log(approved);
     const newReview: IReview = {
-      paperId: props.paperId,
+      paperId: props.paper.id,
       approved: approved,
       comments: comment,
     };
-    console.log(props.paperId + " paperid");
     reviewService.postReview(newReview).then((res) => {
       if (res.success == false) alert(res.message);
       else {
         alert(res.message);
-        window.location.href = "/feed";
+        window.location.href = "/ForReview";
       }
     });
   };
   return (
     <div>
-      <Button onClick={handleOpen} color="info" variant="outlined">Write Review</Button>
+      <Button onClick={handleOpen} color="secondary" fullWidth variant="contained">Write Review</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -65,7 +66,7 @@ function ReviewUploadModal(props: { paperId: number }) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mb: 2 }}>
-            Write your Review
+            Write your Review for: <br /> <br />  <b>{props.paper.title}</b> <br />
           </Typography>
           <TextField
             id="commentTb"
@@ -93,9 +94,9 @@ function ReviewUploadModal(props: { paperId: number }) {
               color="default"
             >
               {approved ? (
-                <ThumbUpAlt color="success" />
+                <CheckCircleIcon color="success" />
               ) : (
-                <ThumbUpAltOutlined />
+                <CheckCircleOutlineIcon />
               )}
             </IconButton>
             <IconButton
@@ -105,9 +106,9 @@ function ReviewUploadModal(props: { paperId: number }) {
               }}
             >
               {approved ? (
-                <ThumbDownAltOutlined />
+                <HighlightOffIcon />
               ) : (
-                <ThumbDownAlt color="error" />
+                <CancelIcon color="error" />
               )}
             </IconButton>
           </div>

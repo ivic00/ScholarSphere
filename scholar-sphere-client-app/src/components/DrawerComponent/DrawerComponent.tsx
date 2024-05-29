@@ -127,11 +127,13 @@ export default function DrawerComponent(props: {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
+              <ListItemButton onClick={() => {
+                window.location.href = "/PendingPapersView"
+              }}>
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
-                <ListItemText primary="View Papers" />
+                <ListItemText primary="Publish Papers" />
               </ListItemButton>
             </ListItem>
           </>

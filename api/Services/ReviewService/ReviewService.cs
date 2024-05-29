@@ -98,6 +98,24 @@ namespace api.Services.ReviewService
             throw new NotImplementedException();
         }
 
+        public async Task<ServiceResponse<List<GetReviewDTO>>> GetAllReviews()
+        {
+            var serviceResponse = new ServiceResponse<List<GetReviewDTO>>();
+
+            try
+            {
+                serviceResponse.Data = await _context.Reviews.Include(r => r.Paper).Select(x => _mapper.Map<GetReviewDTO>(x)).ToListAsync();
+                serviceResponse.Message = "retrieved all reviews";
+            }
+            catch (System.Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
 
         //Da li je korisnik vec napisao recenziju
         private async Task<bool> ReviewCheck(int reviewerId, int paperId)

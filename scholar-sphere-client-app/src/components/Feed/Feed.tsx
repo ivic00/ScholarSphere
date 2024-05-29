@@ -22,7 +22,7 @@ import PaginationComponent from "../PaginationComponent/PaginationComponent";
 function Feed() {
   const [paginationParams, setPaginationParams] = useState<IPaginationParams>({
     pageNumber: 1,
-    pageSize: 3,
+    pageSize: 4,
   });
 
   const [papersCount, setPapersCount] = useState<number>(0);

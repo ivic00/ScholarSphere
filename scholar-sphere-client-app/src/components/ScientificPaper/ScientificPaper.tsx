@@ -18,6 +18,8 @@ import "../ScientificPaper/ScientificPaper.scss";
 import { backendLink } from "../../config";
 import { IUser } from "../../interfaces/IUser";
 import userService from "../../services/userService";
+import DownloadPaperBtn from "../DownloadPaperBtn/DownloadPaperBtn";
+import myDateTime from "../../services/MyDT";
 
 const ScientificPaper = (props: { paper: IPaper }) => {
   const [paper, setPaper] = useState<IPaper>(props.paper);
@@ -26,8 +28,8 @@ const ScientificPaper = (props: { paper: IPaper }) => {
   async function handleAuthor() {
     const response = await userService.getPaperAuthor(paper.id);
     setUser(response.data);
-  };
-  
+  }
+
   useEffect(() => {
     setPaper(props.paper);
     handleAuthor();
@@ -38,11 +40,15 @@ const ScientificPaper = (props: { paper: IPaper }) => {
       <Card variant="elevation" elevation={3}>
         <CardContent>
           <b>
-            <Typography variant="h5" color="textPrimary" sx={{fontWeight: 'bold'}}>
+            <Typography
+              variant="h5"
+              color="textPrimary"
+              sx={{ fontWeight: "bold" }}
+            >
               {paper?.title}
             </Typography>
           </b>
-          <Typography variant="subtitle1" sx={{color: 'gray'}}>
+          <Typography variant="subtitle1" sx={{ color: "gray" }}>
             {user?.firstName} {user?.lastName}
           </Typography>
           <br />
@@ -69,9 +75,13 @@ const ScientificPaper = (props: { paper: IPaper }) => {
           ))}
           <br />
           <br />
-          <Typography variant="subtitle1" color="initial">
-            File Here
+          <Typography variant="caption" color="initial" align="right">
+            Published on: <br />
+            {myDateTime.toDate(paper.publicationDate)}
           </Typography>
+          <br />
+          <br />
+          <DownloadPaperBtn paper={paper} />
           <Divider />
           <div></div>
         </CardContent>

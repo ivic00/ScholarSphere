@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.DTOs.Paper;
 using api.DTOs.Review;
+using api.DTOs.UserDTO;
 using api.Enums;
 using api.Models;
 using api.Services.ReviewService;
@@ -75,7 +76,7 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId )
+        public async Task<ServiceResponse<List<GetPaperDTO>>> AddPaper(AddPaperDTO newPaper, int AuthorId)
         {
 
             var serviceResponse = new ServiceResponse<List<GetPaperDTO>>();
@@ -89,16 +90,16 @@ namespace api.Services.PaperService
 
                 if (file != null && file.Length > 0)
                 {
-                    
+
                     string uploadsFolder = Path.Combine(_webHostingEnvironment.ContentRootPath, "Uploads");
 
-                    
+
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-                    
+
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string filePath = Path.Combine(uploadsFolder, fileName);
 
@@ -191,6 +192,7 @@ namespace api.Services.PaperService
 
             var papers = await query
             .Where(x => x.ForPublishing == true)
+            .OrderByDescending(x => x.PublicationDate)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(x => _mapper.Map<GetPaperDTO>(x))
@@ -291,6 +293,7 @@ namespace api.Services.PaperService
 
             try
             {
+
                 var papers = await _context.Papers.Where(x => x.Author.Id == userId).Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
 
                 serviceResponse.Data = papers;
@@ -312,5 +315,138 @@ namespace api.Services.PaperService
             return serviceResponse;
             throw new NotImplementedException();
         }
+
+        public async Task<ServiceResponse<Paper>> GetDownloadPaper(int paperId)
+        {
+            var serviceResponse = new ServiceResponse<Paper>();
+            try
+            {
+                serviceResponse.Data = await _context.Papers.FirstOrDefaultAsync(x => x.Id == paperId);
+                serviceResponse.Message = "paper exists";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+            }
+
+            return serviceResponse;
+
+        }
+
+        /*public async Task<ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>> GetForPublishing(int pageNumber, int pageSize)
+        {
+            var serviceResponse = new ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>();
+
+            try
+            {
+                ServiceResponse<List<GetReviewDTO>> allReviews = await _reviewService.GetAllReviews();
+                var allPapers = await _context.Papers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
+
+                var pendingPapers = allPapers.Where(p => p.ForPublishing == false).Select(paper => Tuple.Create(paper,
+                                                                              allReviews.Data.Count(r => r.PaperId == paper.Id),
+                                                                              allReviews.Data.Count(r => r.PaperId == paper.Id && r.Approved == true),
+                                                                              allReviews.Data.Count(r => r.PaperId == paper.Id && r.Approved == false)
+                                                                              ));
+                int totalCount = pendingPapers.Count();
+
+                var query = pendingPapers.AsQueryable();
+
+                var pendingPapersPagin = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => _mapper.Map<GetPaperDTO>(x))
+                .ToListAsync();
+
+
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+
+                serviceResponse.Data = (IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>?)Tuple.Create((IEnumerable<Tuple<GetPaperDTO, int, int, int>>?)pendingPapersPagin, totalPages);
+
+            }
+            catch (System.Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+                throw;
+            }
+
+            return serviceResponse;
+        }*/
+        public async Task<ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>> GetForPublishing(int pageNumber, int pageSize)
+        {
+            var serviceResponse = new ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>();
+
+            try
+            {
+                ServiceResponse<List<GetReviewDTO>> allReviews = await _reviewService.GetAllReviews();
+                var allPapers = await _context.Papers.Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
+
+                var pendingPapers = allPapers
+                    .Where(p => !p.ForPublishing)
+                    .Select(paper => Tuple.Create(paper,
+                                                  //uzmi ukupan broj pregleda
+                                                  allReviews.Data.Count(r => r.PaperId == paper.Id),
+                                                  //uzmi broj pozitivnih recenzija  
+                                                  allReviews.Data.Count(r => r.PaperId == paper.Id && r.Approved),
+                                                  //uzmi broj negativnih recenzija
+                                                  allReviews.Data.Count(r => r.PaperId == paper.Id && !r.Approved)))
+                    .OrderByDescending(x => x.Item2)
+                    .ToList();
+
+                int totalCount = pendingPapers.Count();
+
+                var pendingPapersPagin = pendingPapers
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                serviceResponse.Data = new List<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>
+        {
+            Tuple.Create((IEnumerable<Tuple<GetPaperDTO, int, int, int>>)pendingPapersPagin, totalPages)
+        };
+
+                serviceResponse.Success = true;
+            }
+            catch (System.Exception ex)
+            {
+                serviceResponse.Message = ex.Message;
+                serviceResponse.Success = false;
+                throw;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetPaperDTO>> PublishPaper(int paperId)
+        {
+            var serviceResponse = new ServiceResponse<GetPaperDTO>();
+            try
+            {
+                var paper = await _context.Papers.FirstOrDefaultAsync(x => x.Id == paperId);
+
+                if (paper is null)
+                    throw new Exception($"Paper with Id: '{paperId}' does not exist");
+
+                paper.ForPublishing = true;
+                paper.PublicationDate = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+
+                serviceResponse.Data = _mapper.Map<GetPaperDTO>(paper);
+                serviceResponse.Message = $"Successfully published {paper.Title}";
+            }
+            catch (System.Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
     }
 }

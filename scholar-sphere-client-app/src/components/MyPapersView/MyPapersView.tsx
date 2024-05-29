@@ -17,6 +17,7 @@ import { IPaper } from "../../interfaces/IPaper";
 import "../MyPapersView/MyPapersView.scss";
 import { SchoolOutlined } from "@mui/icons-material";
 import EditPaperModal from "../EditPaperModal/EditPaperModal";
+import DownloadPaperBtn from "../DownloadPaperBtn/DownloadPaperBtn";
 
 function MyPapersView() {
   const Item = styled(Paper)(({ theme }) => ({
@@ -96,6 +97,7 @@ function MyPapersView() {
                     <Typography variant="caption" color="initial">
                       {paper.publicationDate.toString()}
                     </Typography>
+                    <DownloadPaperBtn paper={paper} />
                   </CardContent>
                   <CardActions>
                     <Button size="large" color="info" variant="outlined">

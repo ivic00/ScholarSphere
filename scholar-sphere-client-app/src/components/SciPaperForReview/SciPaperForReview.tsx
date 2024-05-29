@@ -19,6 +19,7 @@ import ReviewUploadModal from "../ReviewUploadModal/ReviewUploadModal";
 import { WidthFull } from "@mui/icons-material";
 import { IUser } from "../../interfaces/IUser";
 import userService from "../../services/userService";
+import DownloadPaperBtn from "../DownloadPaperBtn/DownloadPaperBtn";
 
 const SciPaperForReview = (props: { paper: IPaper }) => {
   const [paper, setPaper] = useState<IPaper>(props.paper);
@@ -79,12 +80,10 @@ const SciPaperForReview = (props: { paper: IPaper }) => {
           ))}
           <br />
           <br />
-          <Typography variant="subtitle1" color="initial">
-            File Here
-          </Typography>
+          <DownloadPaperBtn paper={paper} />
           <Divider />
           <div className="write-review-btn">
-            <ReviewUploadModal paperId={paperId} />
+            <ReviewUploadModal paper={paper} />
           </div>
         </CardContent>
       </Card>

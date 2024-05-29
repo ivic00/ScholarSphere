@@ -37,5 +37,12 @@ namespace api.Controllers
         {
             return await _reviewService.AddReview(addReviewDTO);
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllReviews")]
+        public async Task<ActionResult<ServiceResponse<List<GetReviewDTO>>>> GetAllReviews()
+        {
+            return await _reviewService.GetAllReviews();
+        }
     }
 }

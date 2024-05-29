@@ -38,6 +38,30 @@ namespace api.Controllers
             return Ok(serviceResponse);
         }
 
+        [HttpGet("DownloadPaper")]
+        public async Task<IActionResult> DownloadFile(int paperId)
+        {
+            var serviceResponse = await _paperService.GetDownloadPaper(paperId);
+            var paper = serviceResponse.Data;
+            if (!serviceResponse.Success)
+            {
+                return NotFound(new { message = serviceResponse.Message });
+            }
+
+            var filePath = paper.PdfURL;
+            var fileName = paper.OriginalFileName;
+            var mimeType = paper.MimeType;
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, mimeType, fileName);
+        }
+
         [HttpGet("GetAllPendingPapers")]
         public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPendingPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string scientificField = "Pharmacology")
         {
@@ -92,26 +116,6 @@ namespace api.Controllers
             return Ok(await _paperService.AddPaper(newPaper, AuthorId));
         }
 
-        /*[HttpGet("DownloadPaper/{id}")]
-        public async Task<IActionResult> DownloadPaper(int id)
-        {
-            var paper = await _context.Papers.FindAsync(id);
-            if (paper == null || string.IsNullOrEmpty(paper.PdfURL))
-            {
-                return NotFound();
-            }
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(paper.PdfURL, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-
-            return File(memory, paper.MimeType, paper.OriginalFileName);
-        }*/
-
-
         [HttpPut("UpdatePaper")]
 
         public async Task<ActionResult<ServiceResponse<GetPaperDTO>>> UpdatePaper(UpdatePaperDTO changedPaper)
@@ -140,6 +144,17 @@ namespace api.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
+        [HttpGet("GetAllForPublishing")]
+        public async Task<ActionResult<ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>>> GetForPublishing(int pageNumber, int pageSize)
+        {
+            return await _paperService.GetForPublishing(pageNumber, pageSize);
+        }
 
+        [HttpPut("PublishPaper")]
+        public async Task<ActionResult<ServiceResponse<GetPaperDTO>>> PublishPaper(int paperId)
+        {
+            return Ok(await _paperService.PublishPaper(paperId));
+        }
     }
 }
