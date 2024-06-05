@@ -123,5 +123,26 @@ namespace api.Services.ReviewService
             return await _context.Reviews
                 .AnyAsync(x => x.Reviewer.Id == reviewerId && x.Paper.Id == paperId);
         }
+
+        public async Task<ServiceResponse<List<GetReviewDTO>>> GetAllForPaper(int paperId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetReviewDTO>>();
+
+            try
+            {
+                var reviews = await _context.Reviews.Where(x => x.Paper.Id == paperId).Include(x => x.Reviewer).Select(x => _mapper.Map<GetReviewDTO>(x)).ToListAsync();
+
+                serviceResponse.Data = reviews;
+                serviceResponse.Message = "Found all reviews for paper";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+                throw;
+            }
+
+            return serviceResponse;
+        }
     }
 }

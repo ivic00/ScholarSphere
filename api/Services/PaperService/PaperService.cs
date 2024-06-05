@@ -90,17 +90,16 @@ namespace api.Services.PaperService
 
                 if (file != null && file.Length > 0)
                 {
-
+                    
                     string uploadsFolder = Path.Combine(_webHostingEnvironment.ContentRootPath, "Uploads");
-
 
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+//+ Path.GetExtension(file.FileName);
+                    string fileName = Guid.NewGuid().ToString();
                     string filePath = Path.Combine(uploadsFolder, fileName);
 
                     await using (var stream = new FileStream(filePath, FileMode.Create))
@@ -109,7 +108,7 @@ namespace api.Services.PaperService
                     }
 
                     paper.PdfURL = filePath;
-                    paper.OriginalFileName = file.FileName;
+                    paper.OriginalFileName = file.FileName + Path.GetExtension(file.FileName);
                     paper.MimeType = file.ContentType;
                 }
 

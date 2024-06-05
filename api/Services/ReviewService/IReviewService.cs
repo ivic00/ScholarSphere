@@ -12,6 +12,7 @@ namespace api.Services.ReviewService
         Task<ServiceResponse<GetReviewDTO>> GetReviewById(int id);
         Task<ServiceResponse<List<GetReviewDTO>>> GetAllReviewsByUser(int userId);
         Task<ServiceResponse<List<GetReviewDTO>>> GetAllReviews();
+        Task<ServiceResponse<List<GetReviewDTO>>> GetAllForPaper(int paperId);
         Task<ServiceResponse<GetReviewDTO>> AddReview(AddReviewDTO addReviewDTO);
         
     }

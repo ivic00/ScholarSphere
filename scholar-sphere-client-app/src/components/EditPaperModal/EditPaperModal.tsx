@@ -1,6 +1,7 @@
 import { Box, Button, Modal, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { IPaper } from "../../interfaces/IPaper";
+import UploadFileButton from "../UploadFileButton/UploadFileButton";
 
 const style = {
   position: "absolute" as "absolute",
@@ -20,8 +21,15 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
   const [abstract, setAbstract] = useState<String>(props.paperForEdit.abstract);
   const [keywords, setKeywords] = useState<String>(props.paperForEdit.keywords);
 
+  const [file, setFile] = useState<File>();
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleFileChange = (value: File) => {
+    setFile(value);
+  };
+
   return (
     <React.Fragment>
       <Button
@@ -63,6 +71,9 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
               setAbstract(e.target.value);
             }}
           />
+          <br />
+          <br />
+          <UploadFileButton onFileChange={handleFileChange} />
           <br />
           <br />
           <TextField

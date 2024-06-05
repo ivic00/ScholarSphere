@@ -18,6 +18,7 @@ import "../MyPapersView/MyPapersView.scss";
 import { SchoolOutlined } from "@mui/icons-material";
 import EditPaperModal from "../EditPaperModal/EditPaperModal";
 import DownloadPaperBtn from "../DownloadPaperBtn/DownloadPaperBtn";
+import ViewReviewsModal from "../ViewReviewsModal/ViewReviewsModal";
 
 function MyPapersView() {
   const Item = styled(Paper)(({ theme }) => ({
@@ -100,9 +101,7 @@ function MyPapersView() {
                     <DownloadPaperBtn paper={paper} />
                   </CardContent>
                   <CardActions>
-                    <Button size="large" color="info" variant="outlined">
-                      View Reviews
-                    </Button>
+                    <ViewReviewsModal paper = {paper} />
                     {!paper.forPublishing && (
                       <EditPaperModal paperForEdit={paper} />
                     )}

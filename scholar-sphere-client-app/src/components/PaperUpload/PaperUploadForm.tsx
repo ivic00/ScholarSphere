@@ -64,7 +64,6 @@ function PaperUploadForm() {
 
   const handleFileChange = (value: File) => {
     setFile(value);
-    console.log(file);
   };
 
   useEffect(() => {

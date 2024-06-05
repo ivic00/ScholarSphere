@@ -5,13 +5,8 @@ import {
   Stack,
   Button,
   ButtonGroup,
-  Card,
-  CardContent,
-  Pagination,
-  InputLabel,
-  MenuItem,
-  Select,
   SelectChangeEvent,
+  Typography,
 } from "@mui/material";
 import ScientificPaper from "../ScientificPaper/ScientificPaper";
 import { IPaper } from "../../interfaces/IPaper";
@@ -107,6 +102,11 @@ function Feed() {
 
   return (
     <Grid container spacing={2} direction="row" justifyContent="center">
+      <Grid item xs={12}>
+        <Typography variant="h2" color="initial">
+          Published papers
+        </Typography>
+      </Grid>
       <Grid item xs={8}>
         <PaginationComponent
           pageNumber={paginationParams.pageNumber}
@@ -116,9 +116,7 @@ function Feed() {
           onPageSizeChange={handlePageSizeChange}
         />
       </Grid>
-      <Grid item xs={4}>
-        
-      </Grid>
+      <Grid item xs={4}></Grid>
       <Grid item xs={8}>
         {papers.map((paper) => (
           <ScientificPaper key={paper.id.toString()} paper={paper} />

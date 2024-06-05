@@ -7,30 +7,21 @@ import AdbIcon from "@mui/icons-material/Adb";
 import SchoolIcon from "@mui/icons-material/School";
 import "./NavBar.scss";
 import {
-  Tabs,
-  Tab,
   Box,
   Button,
   IconButton,
-  Avatar,
   Container,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
-import axiosInstance from "../../services/axiosInstance";
 import { IUser } from "../../interfaces/IUser";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
-import Feed from "../Feed/Feed";
-import Home from "../Home/Home";
 import userService from "../../services/userService";
 import { glassyBackgroundPrimary } from "../../Themes/mainTheme";
 const NavBar = () => {
   const [user, setUser] = useState<IUser>();
   const [token, setToken] = useState<string>();
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
-  const pages = ["Home", "Feed"];
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );

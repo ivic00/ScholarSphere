@@ -38,11 +38,17 @@ namespace api.Controllers
             return await _reviewService.AddReview(addReviewDTO);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetAllReviews")]
         public async Task<ActionResult<ServiceResponse<List<GetReviewDTO>>>> GetAllReviews()
         {
             return await _reviewService.GetAllReviews();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllPaperReviews")]
+        public async Task<ActionResult<ServiceResponse<List<GetReviewDTO>>>> GetAllPaperReviews(int paperId)
+        {
+            return await _reviewService.GetAllForPaper(paperId);
         }
     }
 }

@@ -9,7 +9,6 @@ import {
   Button,
 } from "@mui/material";
 import PaginationComponent from "../PaginationComponent/PaginationComponent";
-import ScientificPaper from "../ScientificPaper/ScientificPaper";
 import { IPaginationParams } from "../../interfaces/IPaginationParams";
 import { IPaper } from "../../interfaces/IPaper";
 import paperService from "../../services/paperService";

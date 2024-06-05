@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import myDateTime from "../../services/MyDT";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
+import ViewReviewsModal from "../ViewReviewsModal/ViewReviewsModal";
 function PendingPapersView() {
   const [pendPaps, setPendPaps] = useState<IPaperForPub[]>();
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -168,14 +169,7 @@ function PendingPapersView() {
                         <DownloadPaperBtn paper={paper.data} />
                       </CardContent>
                       <CardActions>
-                        <Button
-                          size="large"
-                          color="info"
-                          variant="contained"
-                          sx={{ width: "40%" }}
-                        >
-                          View Reviews
-                        </Button>
+                        <ViewReviewsModal paper={paper.data} />
                         {paper.revCount >= 3 &&
                         paper.posRevCount > paper.negRevCount ? (
                           <Button
