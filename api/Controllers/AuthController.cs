@@ -37,7 +37,7 @@ namespace api.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<ServiceResponse<int>>> Register(LoginUserDto request)
+        public async Task<ActionResult<ServiceResponse<int>>> Login(LoginUserDto request)
         {
             var response = await _authRepository.Login(request.username, request.password);
 
