@@ -21,7 +21,6 @@ namespace api.Data
         {
             _configuration = configuration;
             _context = context;
-
         }
         public async Task<ServiceResponse<string>> Login(string username, string password)
         {
