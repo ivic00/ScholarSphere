@@ -20,10 +20,11 @@ class PaperService {
   public async getForReview(
     pageNumber: number,
     pageSize: number,
-    scientificField: string
+    scientificField: string,
+    sortState: number
   ) {
     const response = await axiosInstance.get(
-      `/api/Paper/GetAllPendingPapers?pageNumber=${pageNumber}&pageSize=${pageSize}&scientificField=${scientificField}`
+      `/api/Paper/GetAllPendingPapers?pageNumber=${pageNumber}&pageSize=${pageSize}&scientificField=${scientificField}&sortState=${sortState}`
     );
     return response.data.data;
   }

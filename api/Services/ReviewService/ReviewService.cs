@@ -132,8 +132,16 @@ namespace api.Services.ReviewService
             {
                 var reviews = await _context.Reviews.Where(x => x.Paper.Id == paperId).Include(x => x.Reviewer).Select(x => _mapper.Map<GetReviewDTO>(x)).ToListAsync();
 
-                serviceResponse.Data = reviews;
-                serviceResponse.Message = "Found all reviews for paper";
+                if (reviews.Count == 0)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "This Paper has no reviews";
+                }
+                else
+                {
+                    serviceResponse.Data = reviews;
+                    serviceResponse.Message = "Found all reviews for paper";
+                }
             }
             catch (Exception ex)
             {

@@ -106,13 +106,15 @@ function PendingPapersView() {
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
           />
-          <Grid container spacing={2}>
-            {pendPaps.map((paper, index) => (
+          <Grid
+            container
+            spacing={2}
+            xs={12}
+            style={{ display: "flex", alignItems: "stretch" }}
+          >
+            {pendPaps.map((paper) => (
               <React.Fragment key={paper.data.id}>
-                <Grid
-                  item
-                  xs={index % 4 === 0 || (index + 1) % 4 === 0 ? 7 : 5}
-                >
+                <Grid item xs={12} md={6} xl={4}>
                   <React.Fragment>
                     <Paper>
                       <CardContent>

@@ -90,7 +90,7 @@ namespace api.Services.PaperService
 
                 if (file != null && file.Length > 0)
                 {
-                    
+
                     string uploadsFolder = Path.Combine(_webHostingEnvironment.ContentRootPath, "Uploads");
 
                     if (!Directory.Exists(uploadsFolder))
@@ -98,7 +98,7 @@ namespace api.Services.PaperService
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-//+ Path.GetExtension(file.FileName);
+                    //+ Path.GetExtension(file.FileName);
                     string fileName = Guid.NewGuid().ToString();
                     string filePath = Path.Combine(uploadsFolder, fileName);
 
@@ -181,7 +181,7 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPublished(int pageNumber, int pageSize)
+        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPublished(int pageNumber, int pageSize, int sortState)
         {
             var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
             var query = _context.Papers.AsQueryable();
@@ -191,7 +191,8 @@ namespace api.Services.PaperService
 
             var papers = await query
             .Where(x => x.ForPublishing == true)
-            .OrderByDescending(x => x.PublicationDate)
+            .OrderBy(x => sortState == 1 ? x.PublicationDate : DateTime.MinValue)
+            .OrderByDescending(x => sortState == 0 ? x.PublicationDate : DateTime.MaxValue)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(x => _mapper.Map<GetPaperDTO>(x))
@@ -206,65 +207,51 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField)
-        {
-            ServiceResponse<List<GetReviewDTO>> userReviews = new ServiceResponse<List<GetReviewDTO>>();
+public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField, int sortState)
+{
+    var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
+    var query = _context.Papers.AsQueryable();
 
-            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
-            var query = _context.Papers.AsQueryable();
+    // Get user reviews
+    var userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
 
-            //bez uslova racuna i radove koji nisu objavljeni
+    List<int> reviewedPaperIds = new List<int>();
 
-            userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
+    if (userReviews.Data != null)
+    {
+        reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+    }
 
-            List<int> reviewedPaperIds;
+    // Build the query
+    query = query.Where(x => x.ForPublishing == false && x.ScientificField == scientificField && !reviewedPaperIds.Contains(x.Id));
 
-            if (userReviews.Data != null)
-            {
-                reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+    // Apply sorting based on sortState
+    query = sortState == 0
+        ? query.OrderByDescending(x => x.PublicationDate)
+        : query.OrderBy(x => x.PublicationDate);
 
-                var totalCount = await query.CountAsync(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id) && x.ScientificField == scientificField);
+    // Calculate total count
+    var totalCount = await query.CountAsync();
 
-                var papers = await query
-                .Where(x => x.ForPublishing == false && x.ScientificField == scientificField && !reviewedPaperIds.Contains(x.Id))
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Select(x => _mapper.Map<GetPaperDTO>(x))
-                .ToListAsync();
+    // Fetch the paginated data
+    var papers = await query
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .Select(x => _mapper.Map<GetPaperDTO>(x))
+        .ToListAsync();
 
+    // Calculate total pages
+    var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+    // Prepare the result
+    var result = Tuple.Create(papers, totalPages);
+    serviceResponse.Data = result;
 
-                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+    // Set the message
+    serviceResponse.Message = userReviews.Data != null ? "User probably has reviews" : "Total Count = " + totalCount;
 
-                var result = Tuple.Create(papers, totalPages);
-
-                serviceResponse.Data = result;
-                serviceResponse.Message = "User probably has reviews";
-                return serviceResponse;
-            }
-            else
-            {
-                var totalCount = await query.CountAsync(x => x.ForPublishing == false && x.ScientificField == scientificField);
-
-                var papers = await query
-               .Where(x => x.ForPublishing == false && x.ScientificField == scientificField)
-               .Skip((pageNumber - 1) * pageSize)
-               .Take(pageSize)
-               .Select(x => _mapper.Map<GetPaperDTO>(x))
-               .ToListAsync();
-
-
-
-                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                var result = Tuple.Create(papers, totalPages);
-
-                serviceResponse.Data = result;
-                serviceResponse.Message = "Total Count = " + totalCount;
-                return serviceResponse;
-            }
-
-        }
+    return serviceResponse;
+}
 
         //za badge
         public async Task<ServiceResponse<int>> GetPendingCount()
@@ -292,7 +279,6 @@ namespace api.Services.PaperService
 
             try
             {
-
                 var papers = await _context.Papers.Where(x => x.Author.Id == userId).Select(x => _mapper.Map<GetPaperDTO>(x)).ToListAsync();
 
                 serviceResponse.Data = papers;

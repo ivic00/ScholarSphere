@@ -26,9 +26,9 @@ namespace api.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetAllPublishedPapers")]
-        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPublishedPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPublishedPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] int sortState = 0)
         {
-            var tuple = await _paperService.GetAllPublished(pageNumber, pageSize);
+            var tuple = await _paperService.GetAllPublished(pageNumber, pageSize, sortState);
             var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>()
             {
                 Data = tuple.Data,
@@ -63,9 +63,9 @@ namespace api.Controllers
         }
 
         [HttpGet("GetAllPendingPapers")]
-        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPendingPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string scientificField = "Pharmacology")
+        public async Task<ActionResult<ServiceResponse<Tuple<List<GetPaperDTO>, int>>>> GetAllPendingPapers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string scientificField = "Pharmacology", [FromQuery] int sortState = 0)
         {
-            var tuple = await _paperService.GetAllPending(pageNumber, pageSize, scientificField);
+            var tuple = await _paperService.GetAllPending(pageNumber, pageSize, scientificField, sortState);
             var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>()
             {
                 Data = tuple.Data,

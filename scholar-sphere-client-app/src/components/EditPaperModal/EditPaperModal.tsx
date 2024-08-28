@@ -37,6 +37,7 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
         size="large"
         color="warning"
         variant="outlined"
+        fullWidth
       >
         Edit Paper
       </Button>

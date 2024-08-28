@@ -6,6 +6,10 @@ $gradient: linear-gradient(
 );
 $border-width: 3px;
 
+.fullHeight {
+  height: 100%;
+}
+
 .review-paper {
   position: relative;
   padding: $border-width;

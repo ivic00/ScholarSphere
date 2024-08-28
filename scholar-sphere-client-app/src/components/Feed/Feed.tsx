@@ -7,12 +7,15 @@ import {
   ButtonGroup,
   SelectChangeEvent,
   Typography,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import ScientificPaper from "../ScientificPaper/ScientificPaper";
 import { IPaper } from "../../interfaces/IPaper";
 import "../Feed/Feed.scss";
 import { IPaginationParams } from "../../interfaces/IPaginationParams";
 import PaginationComponent from "../PaginationComponent/PaginationComponent";
+import SortByButtons from "../SortByButtons/SortByButtons";
 
 function Feed() {
   const [paginationParams, setPaginationParams] = useState<IPaginationParams>({
@@ -23,12 +26,12 @@ function Feed() {
   const [papersCount, setPapersCount] = useState<number>(0);
 
   const [papers, setPapers] = useState<IPaper[]>([]);
-  const [sortState, setSortState] = useState<Number>(0);
+  const [sortState, setSortState] = useState<number>(0);
 
   const getPapers = () => {
     const link: any =
       backendLink +
-      `Paper/GetAllPublishedPapers?pageNumber=${paginationParams?.pageNumber}&pageSize=${paginationParams?.pageSize}`;
+      `Paper/GetAllPublishedPapers?pageNumber=${paginationParams?.pageNumber}&pageSize=${paginationParams?.pageSize}&sortState=${sortState}`;
 
     fetch(link)
       .then((res) => res.json())
@@ -52,43 +55,9 @@ function Feed() {
 
   useEffect(() => {
     getPapers();
-  }, [paginationParams]);
+  }, [paginationParams, sortState]);
 
-  const buttons = [
-    <Button
-      key="latest"
-      variant="contained"
-      color="primary"
-      onClick={() => {
-        getPapers();
-        setSortState(0);
-      }}
-    >
-      Latest
-    </Button>,
-    <Button
-      key="best-rated"
-      variant="contained"
-      color="primary"
-      onClick={() => {
-        getPapers();
-        setSortState(1);
-      }}
-    >
-      Best Rated
-    </Button>,
-    <Button
-      key="earliest"
-      variant="contained"
-      color="primary"
-      onClick={() => {
-        getPapers();
-        setSortState(2);
-      }}
-    >
-      Earliest
-    </Button>,
-  ];
+
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -107,7 +76,12 @@ function Feed() {
           Published papers
         </Typography>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12}>
+        <Stack spacing={1}>
+          <SortByButtons setSortState={setSortState} sortState={sortState} />
+        </Stack>
+      </Grid>
+      <Grid item xs={12} sm={11} md={10} lg={9}>
         <PaginationComponent
           pageNumber={paginationParams.pageNumber}
           pageSize={paginationParams.pageSize}
@@ -116,8 +90,7 @@ function Feed() {
           onPageSizeChange={handlePageSizeChange}
         />
       </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} sm={11} md={10} lg={9}>
         {papers.map((paper) => (
           <ScientificPaper key={paper.id.toString()} paper={paper} />
         ))}
@@ -128,18 +101,6 @@ function Feed() {
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
-      </Grid>
-      <Grid item xs={4}>
-        <Stack spacing={1}>
-          <ButtonGroup
-            variant="contained"
-            orientation="vertical"
-            color="primary"
-            size="large"
-          >
-            {buttons}
-          </ButtonGroup>
-        </Stack>
       </Grid>
     </Grid>
   );

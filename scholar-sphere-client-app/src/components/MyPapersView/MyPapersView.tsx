@@ -44,13 +44,25 @@ function MyPapersView() {
 
   return (
     <div>
-      <Grid container spacing={2}>
-        {papers.map((paper, index) => (
+      <Grid container spacing={2} justifyContent={"center"}>
+        {papers.map((paper) => (
           <React.Fragment key={paper.id}>
-            <Grid item xs={index % 4 === 0 || (index + 1) % 4 === 0 ? 7 : 5}>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              xl={4}
+              style={{ display: "flex", alignItems: "stretch" }}
+            >
               <React.Fragment>
-                <Paper>
-                  <CardContent>
+                <Paper
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }}
+                >
+                  <CardContent style={{ flex: "1 0 auto" }}>
                     {paper.forPublishing ? (
                       <Alert
                         iconMapping={{
@@ -95,13 +107,24 @@ function MyPapersView() {
                     ))}
                     <br />
                     <br />
+                  </CardContent>
+                  <CardContent>
                     <Typography variant="caption" color="initial">
-                      {paper.publicationDate.toString()}
+                      Published on:{" "}
+                      {new Date(paper.publicationDate).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </Typography>
-                    <DownloadPaperBtn paper={paper} />
                   </CardContent>
                   <CardActions>
-                    <ViewReviewsModal paper = {paper} />
+                    <DownloadPaperBtn paper={paper} />
+                  </CardActions>
+                  <CardActions>
+                    <ViewReviewsModal paper={paper} />
                     {!paper.forPublishing && (
                       <EditPaperModal paperForEdit={paper} />
                     )}

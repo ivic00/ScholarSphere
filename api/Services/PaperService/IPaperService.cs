@@ -10,8 +10,8 @@ namespace api.Services.PaperService
     public interface IPaperService
     {
         Task<ServiceResponse<IEnumerable<Tuple<IEnumerable<Tuple<GetPaperDTO, int, int, int>>, int>>>> GetForPublishing(int pageNumber, int pageSize);
-        Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPublished(int pageNumber, int pageSize);
-        Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField);
+        Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPublished(int pageNumber, int pageSize, int sortState);
+        Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField, int sortState);
         Task<ServiceResponse<int>> GetPendingCount();
         Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPapers(int pageNumber, int pageSize);
         Task<ServiceResponse<List<GetPaperDTO>>> GetAllFromAuthor(int userId);

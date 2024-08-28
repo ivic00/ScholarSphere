@@ -57,8 +57,8 @@ function ViewReviewsModal(props: { paper: IPaper }) {
         size="large"
         color="info"
         variant="contained"
+        fullWidth
         onClick={handleOpen}
-        sx={{ width: "40%" }}
       >
         View Reviews
       </Button>
@@ -74,17 +74,27 @@ function ViewReviewsModal(props: { paper: IPaper }) {
             {props.paper.title}
           </Typography>
           <br />
-          {serviceResponse?.data.map((review, index) => (
-            <React.Fragment>
-              <Typography key={index} variant="caption" color="initial">{review.reviewer?.firstName} {review.reviewer?.lastName}</Typography>
-              <Typography key={index+1} variant="body1" color="initial">
-                {review.comments}
-              </Typography>
-              {review.approved ? <CheckCircleIcon key={index+2} color="success" /> : <CancelIcon key={index+3} color="error"/>}
-              <br />
-              <br />
-            </React.Fragment>
-          ))}
+          {serviceResponse?.success ? (
+            serviceResponse.data.map((review, index) => (
+              <React.Fragment key={index}>
+                <Typography variant="caption" color="initial">
+                  {review.reviewer?.firstName} {review.reviewer?.lastName}
+                </Typography>
+                <Typography variant="body1" color="initial">
+                  {review.comments}
+                </Typography>
+                {review.approved ? (
+                  <CheckCircleIcon color="success" />
+                ) : (
+                  <CancelIcon color="error" />
+                )}
+                <br />
+                <br />
+              </React.Fragment>
+            ))
+          ) : (
+            <Typography variant="subtitle1" color="initial">{serviceResponse?.message}</Typography>
+          )}
         </Box>
       </Modal>
     </>
