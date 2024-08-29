@@ -93,7 +93,11 @@ export default function DrawerComponent(props: {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
+              <ListItemButton
+                onClick={() => {
+                  window.location.href = "/MyFields";
+                }}
+              >
                 <ListItemIcon>
                   <InterestsIcon />
                 </ListItemIcon>
@@ -125,9 +129,11 @@ export default function DrawerComponent(props: {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => {
-                window.location.href = "/PendingPapersView"
-              }}>
+              <ListItemButton
+                onClick={() => {
+                  window.location.href = "/PendingPapersView";
+                }}
+              >
                 <ListItemIcon>
                   <ArticleIcon />
                 </ListItemIcon>
@@ -160,7 +166,12 @@ export default function DrawerComponent(props: {
       >
         {props.username}
       </Button>
-      <Drawer sx={{...glassyBackground}} open={open} onClose={toggleDrawer(false)} anchor="right">
+      <Drawer
+        sx={{ ...glassyBackground }}
+        open={open}
+        onClose={toggleDrawer(false)}
+        anchor="right"
+      >
         {DrawerList}
       </Drawer>
     </div>

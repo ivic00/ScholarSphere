@@ -4,32 +4,26 @@ import axiosInstance from "../../services/axiosInstance";
 
 interface Props {
   onSciFieldChange: (value: string) => void;
+  existingFields?: string[];
 }
 
-const FieldSelect: React.FC<Props> = ({onSciFieldChange}) => {
+const FieldSelect: React.FC<Props> = ({ onSciFieldChange, existingFields }) => {
   const [sciFieldExpertise, setSciFieldExpertise] = useState<string[]>([]);
-  const [expertise, setExpertise] = useState<string>("");
+  const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
 
-  const [sciFieldGroups, setSciFieldGroups] = useState<string[]>([]);
-  const [selectedFieldGroup, setSelectedFieldGroup] = useState<string>();
-
-  const handleSciFieldGroupChange = (event: SelectChangeEvent) => {
-    setSelectedFieldGroup(event.target.value);
-  };
-
-  const handleexpertiseChange = (event: SelectChangeEvent) => {
-    setExpertise(event.target.value);
+  const handleExpertiseChange = (event: SelectChangeEvent<string[]>) => {
+    setSelectedExpertise(event.target.value as string[]);
   };
 
   useEffect(() => {
-    onSciFieldChange(expertise);
-  }, [expertise])
+    const fieldsString = arrayToString(selectedExpertise);
+    onSciFieldChange(fieldsString);
+  }, [selectedExpertise]);
+
   useEffect(() => {
     const fetchExpertise = async () => {
       try {
-        const response = await axiosInstance.get(
-          "api/ScientificFields/fields/" + selectedFieldGroup
-        );
+        const response = await axiosInstance.get("api/ScientificFields/fields");
         setSciFieldExpertise(response.data);
       } catch (error) {
         console.error("Error fetching groups:", error);
@@ -37,47 +31,35 @@ const FieldSelect: React.FC<Props> = ({onSciFieldChange}) => {
     };
 
     fetchExpertise();
-  }, [selectedFieldGroup]);
+  }, []);
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/api/ScientificFields/groups"
-        );
-        setSciFieldGroups(response.data);
-      } catch (error) {
-        console.error("Error fetching groups:", error);
-      }
-    };
-    fetchGroups();
-  }, []);
+    if (existingFields != null) {
+      setSelectedExpertise(existingFields);
+      console.log("yaaaaaa", existingFields);
+    }
+  }, [existingFields]);
+
+  function arrayToString(fields: string[]): string {
+    return fields.join(";") + ";";
+  }
+
+  function stringToArray(fields: string): string[] {
+    return fields.split(";");
+  }
+
   return (
     <div>
-      <InputLabel id="sciFieldGroupSelect">Scientific Field Group</InputLabel>
-      <Select
-        labelId="sciFieldGroupSelect"
-        id="demo-simple-select-standard"
-        value={selectedFieldGroup}
-        onChange={handleSciFieldGroupChange}
-        label="Scientific Field Group"
-        fullWidth
-      >
-        {sciFieldGroups.map((group, index) => (
-          <MenuItem key={index} value={group}>
-            {group.replace(/([A-Z])/g, " $1").trim()}
-          </MenuItem>
-        ))}
-      </Select>
-      <br />
-      <br />
-      <InputLabel id="sciFieldSelect">Your Expertise</InputLabel>
+      <InputLabel id="sciFieldSelect">Fields</InputLabel>
       <Select
         labelId="sciFieldSelect"
         id="demo-simple-select-standard"
-        value={expertise}
-        onChange={handleexpertiseChange}
+        value={selectedExpertise}
+        onChange={handleExpertiseChange}
         label="Scientific Field Group"
+        variant="standard"
+        multiple
+        multiline
         fullWidth
       >
         {sciFieldExpertise.map((group, index) => (
@@ -88,6 +70,6 @@ const FieldSelect: React.FC<Props> = ({onSciFieldChange}) => {
       </Select>
     </div>
   );
-}
+};
 
 export default FieldSelect;

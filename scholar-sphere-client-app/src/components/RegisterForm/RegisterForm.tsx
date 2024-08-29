@@ -33,10 +33,8 @@ function RegisterForm() {
   const [password, setPassword] = useState<string>("");
 
   const [sciFieldExpertise, setSciFieldExpertise] = useState<string[]>([]);
-  const [expertise, setExpertise] = useState<string>("");
-
-  const [sciFieldGroups, setSciFieldGroups] = useState<string[]>([]);
-  const [selectedFieldGroup, setSelectedFieldGroup] = useState<string>();
+  const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
+  const [expertiseStr, setExpertiseStr] = useState<string>("");
 
   const [serviceResponse, setServiceResponse] = useState<IServiceResponse>();
 
@@ -57,26 +55,33 @@ function RegisterForm() {
       setText(event.target.value);
     };
 
-  const handleSciFieldGroupChange = (event: SelectChangeEvent) => {
-    setSelectedFieldGroup(event.target.value);
+  const handleExpertiseChange = (event: SelectChangeEvent<string[]>) => {
+    setSelectedExpertise(event.target.value as string[]);
   };
 
-  const handleexpertiseChange = (event: SelectChangeEvent) => {
-    setExpertise(event.target.value);
-  };
+  function arrayToString(fields: string[]): string {
+    return fields.join(";") + ";";
+  }
+
+  useEffect(() => {
+    console.log(selectedExpertise);
+  }, [selectedExpertise])
+  
 
   const handleRegister = async () => {
+
     if (!userName || !firstName || !lastName || !password || !role) {
       alert("please fill all informations and select role");
     } else {
       try {
+        const expertise = arrayToString(selectedExpertise);
         const response = await axiosInstance.post("/Auth/Register", {
           userName,
           firstName,
           lastName,
           password,
           role,
-          expertise
+          expertise,
         });
         setServiceResponse(response.data);
       } catch (error: any) {
@@ -98,11 +103,11 @@ function RegisterForm() {
     }
   }, [serviceResponse]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchExpertise = async () => {
       try {
         const response = await axiosInstance.get(
-          "api/ScientificFields/fields/" + selectedFieldGroup
+          "api/ScientificFields/fields"
         );
         setSciFieldExpertise(response.data);
       } catch (error) {
@@ -111,20 +116,6 @@ function RegisterForm() {
     };
 
     fetchExpertise();
-  }, [selectedFieldGroup])
-
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/api/ScientificFields/groups"
-        );
-        setSciFieldGroups(response.data);
-      } catch (error) {
-        console.error("Error fetching groups:", error);
-      }
-    };
-    fetchGroups();
   }, []);
 
   return (
@@ -207,29 +198,16 @@ function RegisterForm() {
             <InputLabel id="sciFieldGroupSelect">
               Scientific Field Group
             </InputLabel>
-            <Select
-              labelId="sciFieldGroupSelect"
-              id="demo-simple-select-standard"
-              value={selectedFieldGroup}
-              onChange={handleSciFieldGroupChange}
-              label="Scientific Field Group"
-              fullWidth
-            >
-              {sciFieldGroups.map((group, index) => (
-                <MenuItem key={index} value={group}>
-                  {group.replace(/([A-Z])/g, " $1").trim()}
-                </MenuItem>
-              ))}
-            </Select>
             <br />
             <br />
             <InputLabel id="sciFieldSelect">Your Expertise</InputLabel>
             <Select
               labelId="sciFieldSelect"
               id="demo-simple-select-standard"
-              value={expertise}
-              onChange={handleexpertiseChange}
+              value={selectedExpertise}
+              onChange={handleExpertiseChange}
               label="Scientific Field Group"
+              multiple
               fullWidth
             >
               {sciFieldExpertise.map((group, index) => (

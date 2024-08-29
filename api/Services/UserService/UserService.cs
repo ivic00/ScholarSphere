@@ -108,5 +108,31 @@ namespace api.Services.UserService
             return serviceResponse;
 
         }
+
+        public async Task<ServiceResponse<GetUserDTO>> UpdateUserExpertise(int userId, string newExpertises)
+        {
+            var serviceResponse = new ServiceResponse<GetUserDTO>();
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "User not found.";
+                return serviceResponse;
+            }
+
+            user.Expertise = newExpertises;
+
+            _context.Entry(user).Property(u => u.Expertise).IsModified = true;
+
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetUserDTO>(user);
+            serviceResponse.Success = true;
+            serviceResponse.Message = "Expertise updated successfully.";
+
+            return serviceResponse;
+        }
     }
 }

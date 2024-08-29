@@ -16,6 +16,7 @@ import ForReview from "./components/ForReview/ForReview";
 import UserPapersView from "./components/MyPapersView/MyPapersView";
 import MyPapersView from "./components/MyPapersView/MyPapersView";
 import PendingPapersView from "./components/PendingPapersView/PendingPapersView";
+import MyFields from "./components/MyFields/MyFields";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -44,6 +45,7 @@ function App() {
               <Route path="/ForReview" Component={ForReview}/>
               <Route path="/MyPapers" Component={MyPapersView}/>
               <Route path = "/PendingPapersView" Component={PendingPapersView} />
+              <Route path="/MyFields" Component={MyFields} />
             </Routes>
           </BrowserRouter>
         </div>

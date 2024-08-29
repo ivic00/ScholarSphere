@@ -27,6 +27,24 @@ namespace api.Controllers
             _userService = userService;
         }
 
+
+        [HttpPatch("UpdateExpertise")]
+        public async Task<IActionResult> UpdateUserExpertise([FromBody] string newExpertise)
+        {
+            int id = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var response = await _userService.UpdateUserExpertise(id, newExpertise);
+
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return NotFound(response);
+            }
+        }
+
         [Authorize]
         [HttpGet("GetUser")]
 

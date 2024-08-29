@@ -207,51 +207,52 @@ namespace api.Services.PaperService
             return serviceResponse;
         }
 
-public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField, int sortState)
-{
-    var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
-    var query = _context.Papers.AsQueryable();
+        public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(int pageNumber, int pageSize, string scientificField, int sortState)
+        {
+            List<string> fields = StringToList(scientificField);
 
-    // Get user reviews
-    var userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            var serviceResponse = new ServiceResponse<Tuple<List<GetPaperDTO>, int>>();
+            var query = _context.Papers.AsQueryable();
 
-    List<int> reviewedPaperIds = new List<int>();
+            var userReviews = await _reviewService.GetAllReviewsByUser(int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)));
 
-    if (userReviews.Data != null)
-    {
-        reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
-    }
+            List<int> reviewedPaperIds = new List<int>();
 
-    // Build the query
-    query = query.Where(x => x.ForPublishing == false && x.ScientificField == scientificField && !reviewedPaperIds.Contains(x.Id));
+            if (userReviews.Data != null)
+            {
+                reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+            }
 
-    // Apply sorting based on sortState
-    query = sortState == 0
-        ? query.OrderByDescending(x => x.PublicationDate)
-        : query.OrderBy(x => x.PublicationDate);
+            var results = await query
+                .Where(x => x.ForPublishing == false && !reviewedPaperIds.Contains(x.Id))
+                .ToListAsync();
 
-    // Calculate total count
-    var totalCount = await query.CountAsync();
+            var filteredResults = results
+                .Where(x => fields.Any(field => x.ScientificField.Split(';').Contains(field)))
+                .ToList();
 
-    // Fetch the paginated data
-    var papers = await query
-        .Skip((pageNumber - 1) * pageSize)
-        .Take(pageSize)
-        .Select(x => _mapper.Map<GetPaperDTO>(x))
-        .ToListAsync();
+            filteredResults = sortState == 0
+                ? filteredResults.OrderByDescending(x => x.PublicationDate).ToList()
+                : filteredResults.OrderBy(x => x.PublicationDate).ToList();
 
-    // Calculate total pages
-    var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var totalCount = filteredResults.Count;
 
-    // Prepare the result
-    var result = Tuple.Create(papers, totalPages);
-    serviceResponse.Data = result;
+            var paginatedResults = filteredResults
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => _mapper.Map<GetPaperDTO>(x))
+                .ToList();
 
-    // Set the message
-    serviceResponse.Message = userReviews.Data != null ? "User probably has reviews" : "Total Count = " + totalCount;
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-    return serviceResponse;
-}
+            var result = Tuple.Create(paginatedResults, totalPages);
+            serviceResponse.Data = result;
+
+            serviceResponse.Message = userReviews.Data != null ? "User probably has reviews" : "Total Count = " + totalCount;
+
+            return serviceResponse;
+        }
+
 
         //za badge
         public async Task<ServiceResponse<int>> GetPendingCount()
@@ -433,5 +434,10 @@ public async Task<ServiceResponse<Tuple<List<GetPaperDTO>, int>>> GetAllPending(
             return serviceResponse;
         }
 
+        public static List<string> StringToList(string input)
+        {
+            string[] splitStrings = input.TrimEnd(';').Split(';');
+            return new List<string>(splitStrings);
+        }
     }
 }

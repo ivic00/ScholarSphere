@@ -34,7 +34,7 @@ function PaperUploadForm() {
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [keywords, setKeywords] = useState("");
-  const [sciField, setSciField] = useState<string>("");
+  const [sciFields, setSciFields] = useState<string>("");
 
   const [titleCheck, setTitleCheck] = useState<boolean>(true);
   const [abstractCheck, setAbstractCheck] = useState<boolean>(true);
@@ -59,7 +59,7 @@ function PaperUploadForm() {
   const [serviceResponse, setServiceResponse] = useState<IServiceResponse>();
 
   const handleSciFieldChange = (value: string) => {
-    setSciField(value);
+    setSciFields(value);
   };
 
   const handleFileChange = (value: File) => {
@@ -89,8 +89,9 @@ function PaperUploadForm() {
     setTitleCheck(title === "");
     setAbstractCheck(abstract === "");
     setKeywordsCheck(keywords === "");
-    setFullTextCheck(sciField === "");
-  }, [title, abstract, keywords, sciField]);
+    setFullTextCheck(sciFields === "");
+    console.log( "_-------" + sciFields);
+  }, [title, abstract, keywords, sciFields]);
 
   async function handleSubmit(
     title: string,
@@ -113,7 +114,7 @@ function PaperUploadForm() {
           title,
           abstract,
           keywords,
-          scientificField: sciField,
+          scientificField: sciFields,
           pdfURL: "thisChanges",
           file: file
         };
@@ -192,7 +193,7 @@ function PaperUploadForm() {
             variant="contained"
             color="primary"
             fullWidth
-            onClick={() => handleSubmit(title, abstract, keywords, sciField)}
+            onClick={() => handleSubmit(title, abstract, keywords, sciFields)}
           >
             Submit
           </Button>

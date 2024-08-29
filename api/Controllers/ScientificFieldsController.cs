@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Collections.Generic;
 using System.IO;
 
 namespace api.Controllers
@@ -16,34 +14,26 @@ namespace api.Controllers
     {
         private readonly string _jsonFilePath = "scientific_fields.json";
 
-        private ScientificFieldData LoadFromJson()
+        private List<string> LoadFromJson()
         {
             using (StreamReader reader = new StreamReader(_jsonFilePath))
             {
                 string json = reader.ReadToEnd();
-                return JsonSerializer.Deserialize<ScientificFieldData>(json);
+                var data = JsonSerializer.Deserialize<ScientificFieldData>(json);
+                return data.ScientificFields;
             }
         }
 
-        [HttpGet("groups")]
-        public IActionResult GetGroups()
+        [HttpGet("fields")]
+        public IActionResult GetFields()
         {
-            var data = LoadFromJson();
-            return Ok(data.ScientificFields.Keys);
+            var fields = LoadFromJson();
+            return Ok(fields);
         }
+    }
 
-        [HttpGet("fields/{group}")]
-        public IActionResult GetFieldsByGroup(string group)
-        {
-            var data = LoadFromJson();
-            if (data.ScientificFields.ContainsKey(group))
-            {
-                return Ok(data.ScientificFields[group]);
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
+    public class ScientificFieldData
+    {
+        public List<string> ScientificFields { get; set; }
     }
 }
