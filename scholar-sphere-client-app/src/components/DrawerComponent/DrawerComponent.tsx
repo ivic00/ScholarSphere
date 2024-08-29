@@ -85,7 +85,7 @@ export default function DrawerComponent(props: {
         {user?.role === userRole.Reviewer && (
           <>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
+              <ListItemButton onClick={() => {window.location.href = "/MyReviews"}}>
                 <ListItemIcon>
                   <ReviewsIcon />
                 </ListItemIcon>

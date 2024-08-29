@@ -17,6 +17,7 @@ import UserPapersView from "./components/MyPapersView/MyPapersView";
 import MyPapersView from "./components/MyPapersView/MyPapersView";
 import PendingPapersView from "./components/PendingPapersView/PendingPapersView";
 import MyFields from "./components/MyFields/MyFields";
+import MyReviews from "./components/MyReviews/MyReviews";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ function App() {
               <Route path="/MyPapers" Component={MyPapersView}/>
               <Route path = "/PendingPapersView" Component={PendingPapersView} />
               <Route path="/MyFields" Component={MyFields} />
+              <Route path="/MyReviews" Component={MyReviews} />
             </Routes>
           </BrowserRouter>
         </div>

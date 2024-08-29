@@ -24,6 +24,19 @@ class ReviewService {
     };
     return serviceResponse;
   }
+
+  public async getAllReviewsByUser(): Promise<IServiceResponse<IReview[]>> {
+    const response = await axiosInstance.get(
+      "/api/Review/GetAllReviewsByUser"
+    );
+    
+    const serviceResponse: IServiceResponse = {
+      data: response.data.data,
+      message: response.data.message,
+      success: response.data.success,
+    };
+    return serviceResponse;
+  }
 }
 
 const userService = new ReviewService();

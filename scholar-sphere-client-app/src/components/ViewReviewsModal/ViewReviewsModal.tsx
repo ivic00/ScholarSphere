@@ -9,8 +9,8 @@ import {
 import "../ReviewUploadModal/ReviewUploadModal.scss";
 import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { ThumbDownAlt } from "@mui/icons-material";
 import { ThumbDownAltOutlined } from "@mui/icons-material";
@@ -44,8 +44,6 @@ function ViewReviewsModal(props: { paper: IPaper }) {
     console.log(serviceResponse);
   };
   const handleClose = () => setOpen(false);
-
-  useEffect(() => {}, [open]);
 
   async function getReviews() {
     setServiceResponse(await reviewService.getAllPaperReviews(props.paper.id));
