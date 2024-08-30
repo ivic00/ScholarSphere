@@ -117,9 +117,15 @@ namespace api.Controllers
         }
 
         [HttpPut("UpdatePaper")]
-
-        public async Task<ActionResult<ServiceResponse<GetPaperDTO>>> UpdatePaper(UpdatePaperDTO changedPaper)
+        public async Task<ActionResult<ServiceResponse<GetPaperDTO>>> UpdatePaper([FromForm] UpdatePaperDTO changedPaper, [FromForm] IFormFile? file)
         {
+            // Handle file upload if present
+            if (file != null && file.Length > 0)
+            {
+                // Set the file to the DTO if it is present
+                changedPaper.File = file;
+            }
+
             var response = await _paperService.UpdatePaper(changedPaper);
 
             if (response.Data == null)
@@ -129,6 +135,7 @@ namespace api.Controllers
 
             return Ok(response);
         }
+
 
         [HttpDelete("{id}")]
 

@@ -129,18 +129,44 @@ namespace api.Services.PaperService
         public async Task<ServiceResponse<GetPaperDTO>> UpdatePaper(UpdatePaperDTO changedPaper)
         {
             ServiceResponse<GetPaperDTO> serviceResponse = new ServiceResponse<GetPaperDTO>();
+
             try
             {
                 var paper = await _context.Papers.FirstOrDefaultAsync(x => x.Id == changedPaper.Id);
-                if (paper is null)
+                if (paper == null)
+                {
                     throw new Exception($"Paper with Id: '{changedPaper.Id}' does not exist");
+                }
 
                 paper.Abstract = changedPaper.Abstract;
                 paper.ScientificField = changedPaper.ScientificField;
                 paper.Keywords = changedPaper.Keywords;
-                paper.PdfURL = changedPaper.PdfURL;
                 paper.Title = changedPaper.Title;
                 paper.LastEditDateTime = DateTime.Now;
+
+                // Check if there's a new file to update
+                if (changedPaper.File != null && changedPaper.File.Length > 0)
+                {
+                    // Process the new file
+                    string uploadsFolder = Path.Combine(_webHostingEnvironment.ContentRootPath, "Uploads");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(changedPaper.File.FileName);
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await changedPaper.File.CopyToAsync(stream);
+                    }
+
+                    // Update paper file properties
+                    paper.PdfURL = filePath;
+                    paper.OriginalFileName = changedPaper.File.FileName;
+                    paper.MimeType = changedPaper.File.ContentType;
+                }
 
                 await _context.SaveChangesAsync();
 
@@ -220,7 +246,7 @@ namespace api.Services.PaperService
 
             if (userReviews.Data != null)
             {
-                reviewedPaperIds = userReviews.Data.Select(ur => ur.PaperId).ToList();
+                reviewedPaperIds = userReviews.Data.Select(ur => ur.Paper.Id).ToList();
             }
 
             var results = await query
@@ -373,11 +399,11 @@ namespace api.Services.PaperService
                     .Where(p => !p.ForPublishing)
                     .Select(paper => Tuple.Create(paper,
                                                   //uzmi ukupan broj pregleda
-                                                  allReviews.Data.Count(r => r.PaperId == paper.Id),
+                                                  allReviews.Data.Count(r => r.Paper.Id == paper.Id),
                                                   //uzmi broj pozitivnih recenzija  
-                                                  allReviews.Data.Count(r => r.PaperId == paper.Id && r.Approved),
+                                                  allReviews.Data.Count(r => r.Paper.Id == paper.Id && r.Approved),
                                                   //uzmi broj negativnih recenzija
-                                                  allReviews.Data.Count(r => r.PaperId == paper.Id && !r.Approved)))
+                                                  allReviews.Data.Count(r => r.Paper.Id == paper.Id && !r.Approved)))
                     .OrderByDescending(x => x.Item2)
                     .ToList();
 

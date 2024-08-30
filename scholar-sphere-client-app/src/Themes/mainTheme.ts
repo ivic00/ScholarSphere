@@ -1,3 +1,4 @@
+import { Palette } from "@mui/icons-material";
 import { ThemeOptions, createTheme } from "@mui/material";
 const glassyBackgroundPrimary = {
   background: "rgba(38, 166, 154, 0.5);",
@@ -12,8 +13,7 @@ const glassyBackground = {
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
   backdropFilter: "blur(4px)",
   "-webkit-backdrop-filter": "blur(4.3px)",
-
-}
+};
 export const themeOptions: ThemeOptions = {
   palette: {
     mode: "light",
@@ -92,13 +92,34 @@ export const themeOptions: ThemeOptions = {
         },
       },
     },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          borderRadius: "16px", // Set your desired border radius here
+          backgroundColor: "#A62632",
+          padding: 5,
+          overflow: "hidden", // Ensures content respects the border radius
+          "&:before": {
+            display: "none", // Optional: removes the default MUI divider line
+          },
+          "&:first-of-type": {
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+          },
+          "&:last-of-type": {
+            borderBottomLeftRadius: "16px",
+            borderBottomRightRadius: "16px",
+          },
+        },
+      },
+    },
     MuiDrawer: {
       styleOverrides: {
         paper: {
           borderBottomLeftRadius: "25px",
           borderTopLeftRadius: "25px",
-          boxShadow: 'none',
-          backgroundColor: "rgba(255, 255, 255, 1)"
+          boxShadow: "none",
+          backgroundColor: "rgba(255, 255, 255, 1)",
         },
       },
     },

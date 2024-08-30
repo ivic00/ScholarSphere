@@ -1,10 +1,24 @@
-import { CardActions, CardContent, Grid, Paper, Typography, Button } from "@mui/material";
+import {
+  CardActions,
+  CardContent,
+  Grid,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { IReview } from "../../interfaces/IReview";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
 import reviewService from "../../services/reviewService";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DownloadPaperBtn from "../DownloadPaperBtn/DownloadPaperBtn";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import mainTheme from "../../Themes/mainTheme";
 
 function MyReviews() {
   const [serviceResponse, setServiceResponse] =
@@ -30,23 +44,43 @@ function MyReviews() {
                 height: "100%",
               }}
             >
-                <CardActions>
-                    <Button variant="text" color="secondary">
-                      View Paper
-                    </Button>
-                </CardActions>
+              <CardContent>
+                <Accordion variant="outlined">
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="paper-content"
+                    id="paper-title"
+                  >
+                    <Typography variant="h6" color="white">
+                      {review.paper?.title}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="subtitle2" color="white">
+                      Abstract:
+                    </Typography>
+                    <Typography variant="caption" color="white">
+                      {review.paper?.abstract}
+                    </Typography>
+                  </AccordionDetails>
+                  {review.paper && <DownloadPaperBtn paper={review.paper} />}
+                </Accordion>
+              </CardContent>
               <CardContent style={{ flex: "1" }}>
-                <Typography variant="caption" color="initial">
-                  {review.reviewer?.firstName} {review.reviewer?.lastName}
-                </Typography>
+                <Typography variant="subtitle2" color="initial">Your review:</Typography>
                 <Typography variant="body1" color="initial">
                   {review.comments}
                 </Typography>
-                {review.approved ? (
-                  <CheckCircleIcon color="success" />
-                ) : (
-                  <CancelIcon color="error" />
-                )}
+                <Box alignContent={"end"}>
+                  {review.approved ? (
+                    <Box>
+                      {" "}
+                      <CheckCircleIcon color="success" />
+                    </Box>
+                  ) : (
+                    <CancelIcon color="error" />
+                  )}
+                </Box>
                 <br />
                 <br />
               </CardContent>

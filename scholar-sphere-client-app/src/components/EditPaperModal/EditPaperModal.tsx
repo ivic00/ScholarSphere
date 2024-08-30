@@ -1,7 +1,10 @@
-import { Box, Button, Modal, TextField } from "@mui/material";
-import React, { useState } from "react";
+import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { IPaper } from "../../interfaces/IPaper";
 import UploadFileButton from "../UploadFileButton/UploadFileButton";
+import paperService from "../../services/paperService";
+import { IUpdatePaper } from "../../interfaces/IUpdatePaper";
+import FieldSelect from "../FieldSelect/FieldSelect";
 
 const style = {
   position: "absolute" as "absolute",
@@ -17,10 +20,13 @@ const style = {
 
 function EditPaperModal(props: { paperForEdit: IPaper }) {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState<String>(props.paperForEdit.title);
-  const [abstract, setAbstract] = useState<String>(props.paperForEdit.abstract);
-  const [keywords, setKeywords] = useState<String>(props.paperForEdit.keywords);
-
+  const [title, setTitle] = useState<string>(props.paperForEdit.title);
+  const [abstract, setAbstract] = useState<string>(props.paperForEdit.abstract);
+  const [keywords, setKeywords] = useState<string>(props.paperForEdit.keywords);
+  const [fields, setFields] = useState<string>(
+    props.paperForEdit.scientificField
+  );
+  const [existingFields, setExistingFields] = useState<string[]>([]);
   const [file, setFile] = useState<File>();
 
   const handleOpen = () => setOpen(true);
@@ -28,6 +34,37 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
 
   const handleFileChange = (value: File) => {
     setFile(value);
+  };
+
+  const handleFieldsChange = (value: string) => {
+    setFields(value);
+  };
+
+  function stringToArray(fields: string): string[] {
+    return fields.split(";").filter((field) => field.trim().length > 0); // filter out empty strings
+  }
+
+  useEffect(() => {
+    setExistingFields(stringToArray(props.paperForEdit.scientificField));
+  }, []);
+
+  const handlePaperUpdate = async () => {
+    try {
+      const newPaper: IUpdatePaper = {
+        id: props.paperForEdit.id,
+        title: title,
+        abstract: abstract,
+        keywords: keywords,
+        scientificField: fields,
+        file: file,
+        forPublishing: false,
+      };
+      await paperService.updatePaper(newPaper, file).then(() => {
+        window.location.href = "/MyPapers";
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -74,7 +111,7 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
           />
           <br />
           <br />
-          <UploadFileButton onFileChange={handleFileChange} />
+          <UploadFileButton onFileChange={handleFileChange} />{file && <Typography variant="caption" color="initial">Uploaded file!</Typography>}
           <br />
           <br />
           <TextField
@@ -87,6 +124,22 @@ function EditPaperModal(props: { paperForEdit: IPaper }) {
               setKeywords(e.target.value);
             }}
           />
+          <br />
+          <br />
+          <FieldSelect
+            onSciFieldChange={handleFieldsChange}
+            existingFields={existingFields}
+          />
+          <br />
+          <br />
+          <Button
+            variant="contained"
+            color="secondary"
+            fullWidth
+            onClick={handlePaperUpdate}
+          >
+            Update Paper
+          </Button>
         </Box>
       </Modal>
     </React.Fragment>

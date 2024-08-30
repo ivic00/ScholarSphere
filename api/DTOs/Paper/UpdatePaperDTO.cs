@@ -8,12 +8,11 @@ namespace api.DTOs.Paper
 {
     public class UpdatePaperDTO
     {
-         public int Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Abstract { get; set; }
         public string Keywords { get; set; }
         public string ScientificField { get; set; }
-        public string PdfURL { get; set; }
-        public bool ForPublishing { get; set; } = false;
+        public IFormFile? File { get; set; }
     }
 }

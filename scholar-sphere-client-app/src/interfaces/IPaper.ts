@@ -1,10 +1,10 @@
 export interface IPaper {
   id: number;
-  title: String;
-  abstract: String;
-  keywords: String;
+  title: string;
+  abstract: string;
+  keywords: string;
   publicationDate: Date;
-  scientificField: String;
+  scientificField: string;
   forPublishing: boolean;
-  pdfUrl: String;
+  pdfUrl: string;
 }

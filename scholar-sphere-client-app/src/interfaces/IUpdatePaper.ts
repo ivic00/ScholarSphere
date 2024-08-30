@@ -1,9 +1,9 @@
 export interface IUpdatePaper {
-  id: 0;
-  title: String;
-  abstract: String;
-  keywords: String;
-  scientificField: String;
-  pdfURL: String;
+  id: number;
+  title: string;
+  abstract: string;
+  keywords: string;
+  scientificField: string;
+  file?: File;
   forPublishing: false;
 }

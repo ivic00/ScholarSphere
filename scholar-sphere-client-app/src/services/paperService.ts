@@ -4,15 +4,18 @@ import { IPaper } from "../interfaces/IPaper";
 import { IServiceResponse } from "../interfaces/IServiceResponse";
 import axiosInstance from "./axiosInstance";
 import { saveAs } from "file-saver";
+import { IUpdatePaper } from "../interfaces/IUpdatePaper";
 
 class PaperService {
   public async publishPaper(paperId: number): Promise<IServiceResponse> {
-    const response = await axiosInstance.put('/api/Paper/PublishPaper?paperId=' + paperId);
+    const response = await axiosInstance.put(
+      "/api/Paper/PublishPaper?paperId=" + paperId
+    );
     const serviceResponse: IServiceResponse = {
       data: response.data.data,
       message: response.data.message,
-      success: response.data.success
-    }
+      success: response.data.success,
+    };
 
     return serviceResponse;
   }
@@ -68,13 +71,43 @@ class PaperService {
     return serviceResponse;
   }
 
-  public async updatePaper(paper: IAddPaper): Promise<IServiceResponse> {
-    const response = await axiosInstance.put("api/Paper/UpdatePaper", paper);
+  public async updatePaper(
+    paper: IUpdatePaper,
+    file?: File
+  ): Promise<IServiceResponse> {
+    // Create FormData object to handle file and other fields
+    const formData = new FormData();
+
+    // Append paper fields to formData
+    formData.append("id", paper.id.toString()); // Assuming paper.id is a number
+    formData.append("title", paper.title);
+    formData.append("abstract", paper.abstract);
+    formData.append("keywords", paper.keywords);
+    formData.append("scientificField", paper.scientificField);
+
+    // Append file if provided
+    if (file) {
+      formData.append("file", file);
+    }
+
+    // Send FormData in PUT request
+    const response = await axiosInstance.put(
+      "api/Paper/UpdatePaper",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // Map the response to IServiceResponse
     const serviceResponse: IServiceResponse = {
       data: response.data.data,
       message: response.data.message,
       success: response.data.success,
     };
+
     return serviceResponse;
   }
 
@@ -111,13 +144,18 @@ class PaperService {
     }
   }
 
-  public async GetAllPendingPaginated(pageNumber: number, pageSize: number): Promise<IServiceResponse>{
-    const response = await axiosInstance.get(`api/Paper/GetAllForPublishing?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  public async GetAllPendingPaginated(
+    pageNumber: number,
+    pageSize: number
+  ): Promise<IServiceResponse> {
+    const response = await axiosInstance.get(
+      `api/Paper/GetAllForPublishing?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    );
     const serviceResponse: IServiceResponse = {
       data: response.data.data,
       message: response.data.message,
       success: response.data.success,
-    }
+    };
 
     return serviceResponse;
   }
