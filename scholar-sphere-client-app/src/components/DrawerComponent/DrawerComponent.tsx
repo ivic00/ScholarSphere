@@ -21,35 +21,19 @@ import userService from "../../services/userService";
 import { userRole } from "../../types/userRole";
 import { glassyBackgroundPrimary } from "../../Themes/mainTheme";
 import { glassyBackground } from "../../Themes/mainTheme";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 export default function DrawerComponent(props: {
   username: string | undefined;
 }) {
+  const {user, signOut} = useAuthContext();
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<IUser>();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const user = await userService.getUser();
-        setUser(user);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem("jwtToken");
-
-    window.location.href = "/";
-  };
 
   const toPaperUpload = () => {
     window.location.href = "/paperupload";
@@ -121,14 +105,6 @@ export default function DrawerComponent(props: {
         {user?.role === userRole.Administrator && (
           <>
             <ListItem disablePadding>
-              <ListItemButton onClick={handleSignOut}>
-                <ListItemIcon>
-                  <PeopleIcon />
-                </ListItemIcon>
-                <ListItemText primary="View Users" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
                   window.location.href = "/PendingPapersView";
@@ -145,7 +121,7 @@ export default function DrawerComponent(props: {
       </List>
       <List>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleSignOut}>
+          <ListItemButton onClick={signOut}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>

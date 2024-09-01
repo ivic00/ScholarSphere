@@ -18,12 +18,13 @@ import MyPapersView from "./components/MyPapersView/MyPapersView";
 import PendingPapersView from "./components/PendingPapersView/PendingPapersView";
 import MyFields from "./components/MyFields/MyFields";
 import MyReviews from "./components/MyReviews/MyReviews";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
     if (token) {
       setAuthenticated(true);
     } else {
@@ -32,27 +33,35 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <NavBar />
-      <div className="centered-content">
-        <div className="container">
-          <BrowserRouter>
-            <Routes>
-              <Route path="/SignIn" element={<SignIn setAuthenticated={setAuthenticated} />} />
-              <Route path="/Feed" Component={Feed} />
-              <Route path="/" Component={Home} />
-              <Route path="/Register" Component={RegisterForm} />
-              <Route path="/PaperUpload" Component={PaperUploadForm} />
-              <Route path="/ForReview" Component={ForReview}/>
-              <Route path="/MyPapers" Component={MyPapersView}/>
-              <Route path = "/PendingPapersView" Component={PendingPapersView} />
-              <Route path="/MyFields" Component={MyFields} />
-              <Route path="/MyReviews" Component={MyReviews} />
-            </Routes>
-          </BrowserRouter>
+    <AuthProvider>
+      <div className="App">
+        <NavBar />
+        <div className="centered-content">
+          <div className="container">
+            <BrowserRouter>
+              <Routes>
+                <Route
+                  path="/SignIn"
+                  element={<SignIn setAuthenticated={setAuthenticated} />}
+                />
+                <Route path="/Feed" Component={Feed} />
+                <Route path="/" Component={Home} />
+                <Route path="/Register" Component={RegisterForm} />
+                <Route path="/PaperUpload" Component={PaperUploadForm} />
+                <Route path="/ForReview" Component={ForReview} />
+                <Route path="/MyPapers" Component={MyPapersView} />
+                <Route
+                  path="/PendingPapersView"
+                  Component={PendingPapersView}
+                />
+                <Route path="/MyFields" Component={MyFields} />
+                <Route path="/MyReviews" Component={MyReviews} />
+              </Routes>
+            </BrowserRouter>
+          </div>
         </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }
 

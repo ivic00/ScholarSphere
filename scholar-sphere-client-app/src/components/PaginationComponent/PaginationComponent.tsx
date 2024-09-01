@@ -30,9 +30,9 @@ const PaginationComponent: React.FC<PaginationProps> = ({
           color='primary'
           variant="outlined"
         >
-          <MenuItem value={4}>4</MenuItem>
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={20}>20</MenuItem>
+          <MenuItem value={6}>6</MenuItem>
+          <MenuItem value={12}>12</MenuItem>
+          <MenuItem value={24}>24</MenuItem>
         </Select>
     </div>
   )

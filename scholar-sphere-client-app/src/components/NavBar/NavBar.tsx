@@ -18,9 +18,9 @@ import { IUser } from "../../interfaces/IUser";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import userService from "../../services/userService";
 import { glassyBackgroundPrimary } from "../../Themes/mainTheme";
+import { useAuthContext } from "../../contexts/AuthContext";
 const NavBar = () => {
-  const [user, setUser] = useState<IUser>();
-  const [token, setToken] = useState<string>();
+  const {user, token} = useAuthContext();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -34,21 +34,6 @@ const NavBar = () => {
     setAnchorElNav(null);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const user = await userService.getUser();
-        setUser(user);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    setToken(localStorage.getItem("jwtToken")?.toString());
-    if (token != null || token != "") {
-      fetchData();
-    }
-  }, []);
 
   return (
     <AppBar position="fixed" sx={{ ...glassyBackgroundPrimary }}>

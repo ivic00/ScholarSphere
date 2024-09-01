@@ -1,5 +1,6 @@
 $text-animation-duration: 1s;
 $text-animation-delay: 0.3s;
+
 @keyframes slideIn {
   0% {
     transform: translateX(-100%);
@@ -46,4 +47,59 @@ $text-animation-delay: 0.3s;
   flex-direction: column;
   justify-content: center;
   height: 80vh;
+  position: relative;
+}
+
+.box-1 {
+  position: absolute;
+  background-color: #92d2cc;
+  top: 50%;
+  left: 50%;
+  width: 25vh;
+  height: 25vh;
+  object-fit: cover;
+  z-index: -1;
+  transform: translate(70%, -50%);
+  border-radius: 50%;
+  animation: rotate 10s linear infinite;
+}
+
+.box-2 {
+  position: absolute;
+  background-color: #d39299;
+  top: 50%;
+  left: 50%;
+  width: 50vh;
+  height: 50vh;
+  object-fit: cover;
+  z-index: -2;
+  transform: translate(70%, -50%);
+  animation: rotate 50s linear infinite;
+  border-radius: 50%;
+}
+.box-3 {
+  position: absolute;
+  background-color: #d3a192;
+  top: 50%;
+  left: 50%;
+  width: 80vh;
+  height: 80vh;
+  object-fit: cover;
+  z-index: -3;
+  transform: translate(70%, -50%);
+  border-radius: 50%;
+  animation: rotate 100s linear infinite;
+}
+@keyframes rotate {
+  0% {
+    transform: translate(70%, -50%) rotate(0deg);
+    border-radius: 20px;
+  }
+  50% {
+    border-radius: 20%;
+  }
+  100% {
+    transform: translate(70%, -50%) rotate(360deg);
+    border-radius: 20px;
+  }
 }

@@ -14,9 +14,10 @@ import { IPaper } from "../../interfaces/IPaper";
 import paperService from "../../services/paperService";
 import SciPaperForReview from "../SciPaperForReview/SciPaperForReview";
 import SortByButtons from "../SortByButtons/SortByButtons";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 function ForReview() {
-  const [user, setUser] = useState<IUser>();
+  const {user} = useAuthContext();
 
   const [paginationParams, setPaginationParams] = useState<IPaginationParams>({
     pageNumber: 1,
@@ -25,14 +26,6 @@ function ForReview() {
   const [papersCount, setPapersCount] = useState<number>(0);
   const [papers, setPapers] = useState<IPaper[]>([]);
   const [sortState, setSortState] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setUser(await userService.getUser());
-    };
-    fetchData();
-    getPapers();
-  }, []);
 
   useEffect(() => {
     getPapers();

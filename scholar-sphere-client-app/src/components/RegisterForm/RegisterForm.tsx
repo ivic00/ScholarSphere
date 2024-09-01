@@ -23,9 +23,11 @@ import axiosInstance from "../../services/axiosInstance";
 import { IServiceResponse } from "../../interfaces/IServiceResponse";
 import { userRole } from "../../types/userRole";
 import axios from "axios";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 function RegisterForm() {
-  const [role, setRole] = useState<userRole>();
+  const { register, authResponse } = useAuthContext();
+  const [role, setRole] = useState<userRole>(userRole.Author);
 
   const [userName, setUserName] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
@@ -35,8 +37,6 @@ function RegisterForm() {
   const [sciFieldExpertise, setSciFieldExpertise] = useState<string[]>([]);
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
   const [expertiseStr, setExpertiseStr] = useState<string>("");
-
-  const [serviceResponse, setServiceResponse] = useState<IServiceResponse>();
 
   /*ovde definisem tip setState funkcije da bih poslao drugoj funkciji kao param,
     sto znaci da ne moram za svaki Textfield da pravim pojedinacnu funkciju*/
@@ -65,50 +65,25 @@ function RegisterForm() {
 
   useEffect(() => {
     console.log(selectedExpertise);
-  }, [selectedExpertise])
-  
+  }, [selectedExpertise]);
 
   const handleRegister = async () => {
-
-    if (!userName || !firstName || !lastName || !password || !role) {
-      alert("please fill all informations and select role");
-    } else {
-      try {
-        const expertise = arrayToString(selectedExpertise);
-        const response = await axiosInstance.post("/Auth/Register", {
-          userName,
-          firstName,
-          lastName,
-          password,
-          role,
-          expertise,
-        });
-        setServiceResponse(response.data);
-      } catch (error: any) {
-        console.error("Error registering user:", error);
-        setServiceResponse(error.response.data);
-      }
-    }
+    register(userName, firstName, lastName, password, role, arrayToString(selectedExpertise))
   };
 
   useEffect(() => {
-    if (serviceResponse?.message) {
-      alert(serviceResponse.message);
-
-      //ovde se preko JWT automatski loguje korisnik
-      localStorage.setItem("jwtToken", serviceResponse.data);
+    if (authResponse?.message) {
+      localStorage.setItem("jwtToken", authResponse.data);
       if (localStorage.getItem("jwtToken")) {
         window.location.href = "/Feed";
       }
     }
-  }, [serviceResponse]);
+  }, [authResponse]);
 
   useEffect(() => {
     const fetchExpertise = async () => {
       try {
-        const response = await axiosInstance.get(
-          "api/ScientificFields/fields"
-        );
+        const response = await axiosInstance.get("api/ScientificFields/fields");
         setSciFieldExpertise(response.data);
       } catch (error) {
         console.error("Error fetching groups:", error);

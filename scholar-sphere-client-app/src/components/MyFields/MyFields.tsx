@@ -4,9 +4,12 @@ import { IUser } from "../../interfaces/IUser";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import FieldSelect from "../FieldSelect/FieldSelect";
+import { useAuthContext } from "../../contexts/AuthContext";
+import Typography from '@mui/material/Typography'
+import { Box } from "@mui/material";
 
 function MyFields() {
-  const [user, setUser] = useState<IUser>();
+  const { user } = useAuthContext();
   const [expertise, setExpertise] = useState<string[]>([]);
   const [expString, setExpString] = useState<string>("");
 
@@ -17,10 +20,6 @@ function MyFields() {
   function arrayToString(fields: string[]): string {
     return fields.join(";") + ";";
   }
-
-  useEffect(() => {
-    userService.getUser().then((res) => setUser(res));
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -34,25 +33,16 @@ function MyFields() {
 
   useEffect(() => {
     if (expString != "") userService.updateUserExpertise(expString);
-  }, [expString]);  
-
-  /*useEffect(() => {
-    try {
-      if (expertise) {
-        const newExpertise = arrayToString(expertise)
-        console.log(newExpertise)
-        userService.updateUserExpertise(newExpertise);
-      }
-    } catch (error) {}
-  }, [expertise]);*/
-
+  }, [expString]);
   return (
-    <div>
+    <Box sx={{width: '100%', alignContent: 'center'}}>
+      <Typography variant="h5" color="initial">Edit your expertise fields</Typography>
+      <br /><br />
       <FieldSelect
         onSciFieldChange={handleSciFieldChange}
         existingFields={expertise}
       />
-    </div>
+    </Box>
   );
 }
 
